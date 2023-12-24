@@ -7,3 +7,6 @@
 [submodule "apps/inzane"]
 	path = apps/inzane
 	url = git@github.com:log-pose/inzane.git
+[submodule "docker"]
+	path = docker
+	url = git@github.com:log-pose/docker.git
