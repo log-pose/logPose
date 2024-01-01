@@ -1,0 +1,25 @@
+{
+  "name": "@logpose/drizzle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "migrate:generate": "drizzle-kit generate:pg --schema=./src/schema.ts",
+    "migrate:up": "pnpm ./src/migrate.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@logpose/eslint-config": "workspace:*",
+    "@logpose/logger": "workspace:*",
+    "@logpose/typescript-config": "workspace:*",
+    "drizzle-kit": "^0.20.9",
+    "drizzle-orm": "^0.29.2",
+    "pg": "^8.11.3",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.10.9"
+  }
+}
