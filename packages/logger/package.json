@@ -20,7 +20,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/jest-presets": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@logpose/typescript-config": "workspace:*",
     "@types/jest": "^29.5.10",
     "eslint": "^8.54.0",
     "jest": "^29.7.0",
