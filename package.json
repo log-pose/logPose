@@ -1,5 +1,5 @@
 {
-  "name": "with-docker",
+  "name": "logpose",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,8 @@
     "clean": "turbo run clean",
     "dev": "dotenv -- turbo run dev --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "initdb": "dotenv -- turbo run initdb"
   },
   "dependencies": {
     "dotenv-cli": "^7.3.0"

@@ -31,11 +31,17 @@
     "dev": {
       "cache": false,
       "persistent": true,
+      "dependsOn": [
+        "initdb"
+      ],
       "dotEnv": [
         ".env"
       ]
     },
     "clean": {
+      "cache": false
+    },
+    "initdb": {
       "cache": false
     }
   }
