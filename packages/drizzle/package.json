@@ -1,15 +1,20 @@
 {
   "name": "@logpose/drizzle",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "migrate:generate": "drizzle-kit generate:pg --schema=./src/schema.ts",
-    "migrate:up": "pnpm ./src/migrate.ts"
+    "migrate:up": "tsc && pnpm ./dist/migrate.js",
+    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "clean": "rm -rf ./dist"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@logpose/eslint-config": "workspace:*",
     "@logpose/logger": "workspace:*",
