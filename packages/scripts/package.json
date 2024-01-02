@@ -1,0 +1,25 @@
+{
+  "name": "@logpose/scripts",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "initdb": "node ./dist/index.js"
+  },
+  "dependencies": {
+    "@logpose/drizzle": "workspace:*",
+    "@logpose/logger": "workspace:*"
+  },
+  "devDependencies": {
+    "@logpose/eslint-config": "workspace:*",
+    "@logpose/typescript-config": "workspace:*",
+    "esbuild": "^0.19.7",
+    "esbuild-register": "^3.5.0",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.3"
+  }
+}
