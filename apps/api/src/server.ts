@@ -1,6 +1,7 @@
 import { json, urlencoded } from "body-parser";
 import express, { Express } from "express";
 import cors from "cors";
+import router from "./routes";
 
 export const createServer: () => Express = () => {
   const app = express();
@@ -9,9 +10,7 @@ export const createServer: () => Express = () => {
     .use(urlencoded({ extended: true }))
     .use(json())
     .use(cors())
-    .get("/message/:name", (req, res) => {
-      return res.json({ message: `hello ${req.params.name}` });
-    })
+    .use("/api/v1", router)
     .get("/healthz", (req, res) => {
       return res.json({ ok: true });
     });
