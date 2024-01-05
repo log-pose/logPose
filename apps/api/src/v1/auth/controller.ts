@@ -44,7 +44,6 @@ const register = async (req: Request, res: Response) => {
 
   try {
     const id = await createUser(email, username, password, roleId);
-    console.log(id);
     const token = await getJWT(email, id);
 
     return res.status(200).json({

@@ -10,7 +10,6 @@ const saltRounds = 10;
 const hashPassword = async (password: string) => {
   const salt = await bcrypt.genSalt(saltRounds);
   const hash = await bcrypt.hash(password, salt);
-  console.log(hash);
   return hash;
 };
 
@@ -77,9 +76,7 @@ const getJWT = async (email: string, id: string) => {
     id,
   };
 
-  const token = jwt.sign(objToSign, JWT_SECRET, { expiresIn: "1d" });
-  console.log(token);
-  return token;
+  return jwt.sign(objToSign, JWT_SECRET, { expiresIn: "1d" });
 };
 
 export { getRoleId, checkUserExists, createUser, getJWT, verifyPassword };
