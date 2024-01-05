@@ -43,6 +43,9 @@
     },
     "initdb": {
       "cache": false
+    },
+    "migrate:up": {
+      "cache": false
     }
   }
 }
