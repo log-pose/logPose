@@ -46,6 +46,16 @@
     },
     "migrate:up": {
       "cache": false
+    },
+    "api": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "initdb"
+      ],
+      "dotEnv": [
+        ".env"
+      ]
     }
   }
 }
