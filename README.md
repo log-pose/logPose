@@ -1,70 +1,160 @@
-# Turborepo Docker starter
+# Server Monitoring App
 
-This is an official Docker starter Turborepo.
+## Index
 
-## Using this example
+1. [High-Level Design Document](#high-level-design-document)
+   - [System Overview](#system-overview)
+   - [Microservices Architecture](#microservices-architecture)
+   - [Communication Protocols](#communication-protocols)
+   - [Data Storage](#data-storage)
+   - [Scalability](#scalability)
+   - [Load Balancing](#load-balancing)
+   - [Caching](#caching)
+   - [Monitoring and Logging](#monitoring-and-logging)
+   - [Asynchronous Processing](#asynchronous-processing)
+   - [Scalable Frontend](#scalable-frontend)
+   - [CI/CD](#cicd)
+2. [Low-Level Design Document](#low-level-design-document)
+   - [Detailed Component Design](#detailed-component-design)
 
-Run the following command:
+## High-Level Design Document
 
-```sh
-npx create-turbo@latest -e with-docker
-```
+<!-- ![Server Architecture](./assets/architecture.png) -->
 
-## What's inside?
+### System Overview
 
-This turborepo uses [Yarn](https://classic.yarnpkg.com/lang/en/) as a package manager. It includes the following packages/apps:
+The server uptime monitoring tool is designed as a highly scalable, microservice-based application. It enables users to monitor server uptime, receive notifications in case of downtime, and manage server details.
 
-### Apps and Packages
+#### Microservices Architecture
 
-- `@repo/web`: a [Next.js](https://nextjs.org/) app
-- `@repo/api`: an [Express](https://expressjs.com/) server
-- `@repo/ui`: ui: a React component library
-- `@repo/eslint-config-custom`: `eslint` configurations for client side applications (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/eslint-config-custom-server`: `eslint` configurations for server side applications (includes `eslint-config-next` and `eslint-config-prettier`)
-- `scripts`: Jest configurations
-- `@repo/logger`: Isomorphic logger (a small wrapper around console.log)
-- `@repo/typescript-config`: tsconfig.json's used throughout the monorepo
+1. **User Management Microservice**
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+   - **Responsibilities**: User authentication, authorization, and user-related functionalities.
+   - **Technology Stack**: Bun.js, Express, MySql, JWT for authentication.
 
-### Docker
+2. **Server Management Microservice**
 
-This repo is configured to be built with Docker, and Docker compose. To build all apps in this repo:
+   - **Responsibilities**: CRUD operations for servers.
+   - **Technology Stack**: Bun.js, Express, MySql.
 
-```
-# Create a network, which allows containers to communicate
-# with each other, by using their container name as a hostname
-docker network create app_network
+3. **Uptime Monitoring Microservice**
 
-# Build prod using new BuildKit engine
-COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml build
+   - **Responsibilities**: Monitoring server uptime, sending alerts, updating status.
+   - **Technology Stack**: Node.js, Express, InfluxDB.
 
-# Start prod in detached mode
-docker-compose -f docker-compose.yml up -d
-```
+4. **Notification Microservice**
+   - **Responsibilities**: Handling notifications (email, SMS).
+   - **Technology Stack**: Go, RabbitMQ for message queuing.
 
-Open http://localhost:3000.
+#### Communication Protocols
 
-To shutdown all running containers:
+- HTTP/REST
 
-```
-# Stop all running containers
-docker kill $(docker ps -q) && docker rm $(docker ps -a -q)
-```
+#### Data Storage
 
-### Remote Caching
+- PostgreSQL for User and Server Management.
+- InfluxDB for Uptime Data.
 
-This example includes optional remote caching. In the Dockerfiles of the apps, uncomment the build arguments for `TURBO_TEAM` and `TURBO_TOKEN`. Then, pass these build arguments to your Docker build.
+#### Scalability
 
-You can test this behavior using a command like:
+- Containerization with Docker.
+- Orchestration with Kubernetes.
 
-`docker build -f apps/web/Dockerfile . --build-arg TURBO_TEAM=“your-team-name” --build-arg TURBO_TOKEN=“your-token“ --no-cache`
+#### Load Balancing
 
-### Utilities
+- Use of load balancers like Nginx.
 
-This Turborepo has some additional tools already setup for you:
+#### Caching
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Jest](https://jestjs.io) test runner for all things JavaScript
-- [Prettier](https://prettier.io) for code formatting
+- Redis for caching frequently accessed data.
+
+#### Monitoring and Logging
+
+- Prometheus for monitoring.
+- ELK Stack for logging.
+
+#### Asynchronous Processing
+
+- RabbitMQ or Apache Kafka for message queuing.
+
+#### Scalable Frontend
+
+- React.js.
+
+#### CI/CD
+
+- Jenkins.
+
+## Low-Level Design Document
+
+### Detailed Component Design
+
+1. **User Management Microservice**
+
+   **Database Schema**
+
+   - Users Table: `id`, `username`, `password_hash`, `email`, `created_at`.
+   - Roles Table: `id`, `role_name`.
+   - UserRoles Table: `user_id`, `role_id`.
+
+   **API Endpoints**
+
+   - `/login`: Authenticate users.
+   - `/register`: Register new users.
+   - `/user`: Fetch user details.
+
+2. **Server Management Microservice**
+
+   **Database Schema**
+
+   - Servers Table: `id`, `user_id`, `server_name`, `server_ip`, `created_at`.
+
+   **API Endpoints**
+
+   - `/server/add`: Add new server.
+   - `/server/update`: Update server details.
+   - `/server/delete`: Delete server.
+
+3. **Uptime Monitoring Microservice**
+
+   **Processing Logic**
+
+   - Periodic checks on server status.
+   - Record uptime/downtime in InfluxDB.
+   - Trigger alerts if server is down.
+
+4. **Notification Microservice**
+
+   **Processing Logic**
+
+   - Listen to message queue for downtime alerts.
+   - Send email/SMS notifications to users.
+
+5. **API Gateway**
+
+   **Functionality**
+
+   - Request routing to appropriate microservices.
+   - Authentication and authorization.
+
+6. **Frontend Application**
+
+   **Features**
+
+   - User authentication.
+   - Server management interface.
+   - Uptime statistics and alerts display.
+
+7. **Security Considerations**
+
+   **Implementation Details**
+
+   - JWT for secure authentication.
+   - HTTPS for secure communication.
+
+8. **Monitoring and Logging**
+
+   **Tools and Strategies**
+
+   - Prometheus for system metrics.
+   - ELK Stack for aggregating and analyzing logs.
