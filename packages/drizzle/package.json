@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "migrate:generate": "drizzle-kit generate:pg --schema=./src/schema.ts",
-    "migrate:up": "tsc && pnpm ./dist/migrate.js",
+    "migrate:up": "tsc && node ./dist/migrate.js",
     "build": "tsc",
     "start": "node ./dist/index.js",
     "clean": "rm -rf ./dist"
