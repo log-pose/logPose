@@ -1,5 +1,5 @@
 import psqlClient from "./config";
-import { user, user_roles, roles } from "./schema";
+import { user, user_roles, roles, server, server_kind } from "./schema";
 export * from "drizzle-orm";
 
-export { psqlClient, user, user_roles, roles };
+export { psqlClient, server_kind, user, user_roles, roles, server };
