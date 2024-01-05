@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-
-const logger = require("@logpose/logger");
+import logger from "@logpose/logger";
 
 const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const startTime = Date.now();
@@ -16,7 +15,6 @@ const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
     logger.info(`Response: ${res.statusCode} ${res.statusMessage}`);
     logger.debug(`Request took ${duration}ms to process`);
   });
-
   next();
 };
 
