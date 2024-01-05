@@ -15,6 +15,20 @@
       "when": 1704475440683,
       "tag": "0001_thin_gravity",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1704487569330,
+      "tag": "0002_far_sue_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1704488741795,
+      "tag": "0003_minor_khan",
+      "breakpoints": true
     }
   ]
 }

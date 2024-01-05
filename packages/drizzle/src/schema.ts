@@ -5,7 +5,7 @@ import {
   uuid,
   varchar,
   serial,
-  numeric,
+  integer,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -43,16 +43,17 @@ export const server = pgTable("server", {
     .default(sql`gen_random_uuid()`)
     .primaryKey(),
   ip: varchar("ip"),
-  port: numeric("port"),
+  port: integer("port"),
   server_name: varchar("server_name"),
   connecton_string: varchar("connecton_string"),
   server_kind_id: uuid("server_kind_id")
     .references(() => server_kind.id)
     .notNull(),
-  heartbeat_interval: numeric("heartbeat_interval").notNull(),
-  retries: numeric("retries").notNull(),
+  heartbeat_interval: integer("heartbeat_interval").default(60),
+  retries: integer("retries").default(3),
   user_id: uuid("user_id")
     .references(() => user.id)
     .notNull(),
   last_updated: timestamp("last_updated").default(sql`now()`),
+  uri: varchar("uri"),
 });
