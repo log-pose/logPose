@@ -10,7 +10,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
     "initdb": "dotenv -- turbo run initdb",
-    "migrate:up": "dotenv -- turbo run migrate:up"
+    "migrate:up": "dotenv -- turbo run migrate:up",
+    "cron": "dotenv -- turbo run cron"
   },
   "dependencies": {
     "dotenv-cli": "^7.3.0"

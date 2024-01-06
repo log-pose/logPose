@@ -56,6 +56,16 @@
       "dotEnv": [
         ".env"
       ]
+    },
+    "cron": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "initdb"
+      ],
+      "dotEnv": [
+        ".env"
+      ]
     }
   }
 }

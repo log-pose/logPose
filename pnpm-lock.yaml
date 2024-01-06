@@ -98,6 +98,25 @@ importers:
         specifier: ^5.3.2
         version: 5.3.2
 
+  apps/skout:
+    dependencies:
+      node-cron:
+        specifier: ^3.0.3
+        version: 3.0.3
+    devDependencies:
+      '@logpose/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@logpose/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/node-cron':
+        specifier: ^3.0.11
+        version: 3.0.11
+      nodemon:
+        specifier: ^3.0.1
+        version: 3.0.1
+
   apps/web:
     dependencies:
       '@logpose/eslint-config':
@@ -3132,6 +3151,10 @@ packages:
 
   /@types/minimist@1.2.5:
     resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
+    dev: true
+
+  /@types/node-cron@3.0.11:
+    resolution: {integrity: sha512-0ikrnug3/IyneSHqCBeslAhlK2aBfYek1fGo4bP4QnZPmiqSGRK+Oy7ZMisLWkesffJvQ1cqAcBnJC+8+nxIAg==}
     dev: true
 
   /@types/node@18.19.4:
@@ -6626,6 +6649,13 @@ packages:
 
   /node-addon-api@5.1.0:
     resolution: {integrity: sha512-eh0GgfEkpnoWDq+VY8OyvYhFEzBk6jIYbRKdIlyTiAXIVJ8PyBaKb0rp7oDtoddbdoHWhq8wwr+XZ81F1rpNdA==}
+    dev: false
+
+  /node-cron@3.0.3:
+    resolution: {integrity: sha512-dOal67//nohNgYWb+nWmg5dkFdIwDm8EpeGYMekPMrngV3637lqnX0lbUcCtgibHTz6SEz7DAIjKvKDFYCnO1A==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      uuid: 8.3.2
     dev: false
 
   /node-fetch@2.7.0:
