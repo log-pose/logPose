@@ -4,8 +4,8 @@ import {
   timestamp,
   uuid,
   varchar,
-  serial,
   integer,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -19,14 +19,16 @@ export const user = pgTable("user", {
 });
 
 export const roles = pgTable("roles", {
-  id: serial("id").primaryKey(),
+  id: uuid("id")
+    .default(sql`gen_random_uuid()`)
+    .primaryKey(),
   role_name: varchar("role_name").unique(),
   created_at: timestamp("created_at").default(sql`now()`),
 });
 
 export const user_roles = pgTable("user_roles", {
   user_id: uuid("user_id").references(() => user.id),
-  role_id: serial("role_id").references(() => roles.id),
+  role_id: uuid("role_id").references(() => roles.id),
 });
 
 export const server_kind = pgTable("server_kind", {
@@ -56,4 +58,5 @@ export const server = pgTable("server", {
     .notNull(),
   last_updated: timestamp("last_updated").default(sql`now()`),
   uri: varchar("uri"),
+  active: boolean("active").default(true),
 });
