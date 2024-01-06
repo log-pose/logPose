@@ -15,12 +15,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-cron": "^3.0.3"
+    "node-cron": "^3.0.3",
+    "@logpose/drizzle": "workspace:*"
   },
   "devDependencies": {
     "@logpose/eslint-config": "workspace:*",
     "@logpose/typescript-config": "workspace:*",
     "@types/node-cron": "^3.0.11",
+    "@logpose/logger": "workspace:*",
     "nodemon": "^3.0.1"
   }
 }

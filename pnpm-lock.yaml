@@ -100,6 +100,9 @@ importers:
 
   apps/skout:
     dependencies:
+      '@logpose/drizzle':
+        specifier: workspace:*
+        version: link:../../packages/drizzle
       node-cron:
         specifier: ^3.0.3
         version: 3.0.3
@@ -107,6 +110,9 @@ importers:
       '@logpose/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@logpose/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
       '@logpose/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
