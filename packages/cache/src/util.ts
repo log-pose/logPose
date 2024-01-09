@@ -20,9 +20,4 @@ const getKeys = async (key: string) => {
   return reply;
 };
 
-module.exports = {
-  getKeyValue,
-  setKeyValue,
-  deleteKey,
-  getKeys,
-};
+export { getKeyValue, setKeyValue, deleteKey, getKeys };
