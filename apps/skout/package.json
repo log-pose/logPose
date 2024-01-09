@@ -16,7 +16,8 @@
   "license": "ISC",
   "dependencies": {
     "node-cron": "^3.0.3",
-    "@logpose/drizzle": "workspace:*"
+    "@logpose/drizzle": "workspace:*",
+    "@logpose/cache": "workspace:*"
   },
   "devDependencies": {
     "@logpose/eslint-config": "workspace:*",

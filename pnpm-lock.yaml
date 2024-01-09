@@ -100,6 +100,9 @@ importers:
 
   apps/skout:
     dependencies:
+      '@logpose/cache':
+        specifier: workspace:*
+        version: link:../../packages/cache
       '@logpose/drizzle':
         specifier: workspace:*
         version: link:../../packages/drizzle
