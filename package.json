@@ -22,7 +22,7 @@
     "@logpose/eslint-config": "workspace:*",
     "husky": "^8.0.3",
     "prettier": "^3.1.0",
-    "turbo": "latest"
+    "turbo": "^1.11.3"
   },
   "engines": {
     "node": ">=14.0.0",
