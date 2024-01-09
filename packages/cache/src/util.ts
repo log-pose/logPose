@@ -20,4 +20,9 @@ const getKeys = async (key: string) => {
   return reply;
 };
 
-export { getKeyValue, setKeyValue, deleteKey, getKeys };
+const setKeyWithExpiry = async (key: string, value: any, expiry: number) => {
+  const reply = await redisClient.set(key, value, { EX: expiry });
+  return reply;
+};
+
+export { getKeyValue, setKeyValue, deleteKey, getKeys, setKeyWithExpiry };

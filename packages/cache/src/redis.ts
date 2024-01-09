@@ -1,9 +1,9 @@
 import { createClient, RedisClientType } from "redis";
 
-const redisCient: RedisClientType = createClient({
+const redisClient: RedisClientType = createClient({
   url: process.env.REDIS_URL,
 });
 
-redisCient.on("error", (err) => console.log("Redis Client Error", err));
+redisClient.on("error", (err) => console.log("Redis Client Error", err));
 
-export default redisCient;
+export default redisClient;

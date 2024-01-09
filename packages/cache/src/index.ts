@@ -1,4 +1,17 @@
-import redisCient from "./redis";
-import { getKeyValue, setKeyValue, deleteKey, getKeys } from "./util";
+import redisClient from "./redis";
+import {
+  getKeyValue,
+  setKeyValue,
+  deleteKey,
+  getKeys,
+  setKeyWithExpiry,
+} from "./util";
 
-export { redisCient, getKeyValue, setKeyValue, deleteKey, getKeys };
+export {
+  redisClient,
+  getKeyValue,
+  setKeyValue,
+  deleteKey,
+  getKeys,
+  setKeyWithExpiry,
+};
