@@ -25,4 +25,37 @@ const setKeyWithExpiry = async (key: string, value: any, expiry: number) => {
   return reply;
 };
 
-export { getKeyValue, setKeyValue, deleteKey, getKeys, setKeyWithExpiry };
+const setKeyJson = async (
+  key: string,
+  path: string | null | undefined,
+  value: any
+) => {
+  if (!path) {
+    path = "$";
+  }
+  await redisClient.json.set(key, path, value);
+};
+
+const getKeyJson = async (key: string, path?: any | null) => {
+  return await redisClient.json.get(key, path);
+};
+
+const incrementJson = async (key: string, path: any, increment: number) => {
+  await redisClient.json.numIncrBy(key, path, increment);
+};
+
+const arrAppendJson = async (key: string, path: any, value: any) => {
+  await redisClient.json.arrAppend(key, path, value);
+};
+
+export {
+  getKeyValue,
+  setKeyValue,
+  deleteKey,
+  getKeys,
+  setKeyWithExpiry,
+  setKeyJson,
+  getKeyJson,
+  incrementJson,
+  arrAppendJson,
+};
