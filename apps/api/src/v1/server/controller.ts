@@ -1,4 +1,4 @@
-import e, { Request, Response } from "express";
+import e, { Request, RequestHandler, Response } from "express";
 import {
   createNewMonitor,
   getRequiredMonitorParams,
@@ -21,7 +21,7 @@ const createMonitorSchema = z.object({
   retries: z.number(),
 });
 
-export const createMonitor: Function = asyncHandler(
+export const createMonitor: RequestHandler = asyncHandler(
   async (req: IRequest, res: Response) => {
     const {
       kind,
@@ -70,7 +70,7 @@ export const createMonitor: Function = asyncHandler(
   }
 );
 
-export const getMonitorById: Function = asyncHandler(
+export const getMonitorById: RequestHandler = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
 
@@ -84,7 +84,7 @@ export const getMonitorById: Function = asyncHandler(
   }
 );
 
-export const getAllMonitorsForUser: Function = asyncHandler(
+export const getAllMonitorsForUser: RequestHandler = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.body.user.id;
     z.string().uuid().parse(userId);
@@ -93,7 +93,7 @@ export const getAllMonitorsForUser: Function = asyncHandler(
   }
 );
 
-export const updateMonitorById: Function = asyncHandler(
+export const updateMonitorById: RequestHandler = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const {
@@ -138,7 +138,7 @@ export const updateMonitorById: Function = asyncHandler(
   }
 );
 
-export const deleteMonitorById: Function = asyncHandler(
+export const deleteMonitorById: RequestHandler = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     z.string().uuid().parse(id);
