@@ -1,3 +1,5 @@
+import logger from "@logpose/logger";
+
 class ApiError extends Error {
   statusCode: number;
   data: any;
@@ -23,6 +25,8 @@ class ApiError extends Error {
     } else {
       Error.captureStackTrace(this, this.constructor);
     }
+
+    logger.error(this.message);
   }
 }
 
