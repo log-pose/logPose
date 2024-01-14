@@ -25,6 +25,10 @@ const getRoleId = async (role: string) => {
     })
     .from(roles)
     .where(eq(roles.role_name, role));
+
+  if (result.length === 0) {
+    return -1;
+  }
   return result[0].id;
 };
 
@@ -52,7 +56,7 @@ const createUser = async (
   email: string,
   username: string,
   password: string,
-  roleId: number
+  roleId: string
 ) => {
   const id = randomUUID();
   z.string().uuid().parse(id); // throws if invalid uuid

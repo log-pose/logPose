@@ -1,6 +1,4 @@
 import { eq, psqlClient, server, server_kind } from "@logpose/drizzle";
-import { randomUUID } from "node:crypto";
-import { z } from "zod";
 
 export const getRequiredMonitorParams = async (kind: string) => {
   const result = await psqlClient
