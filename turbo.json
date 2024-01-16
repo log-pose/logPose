@@ -49,7 +49,6 @@
     },
     "api": {
       "cache": false,
-      "persistent": true,
       "dependsOn": [
         "initdb"
       ],
@@ -59,7 +58,6 @@
     },
     "cron": {
       "cache": false,
-      "persistent": true,
       "dependsOn": [
         "initdb"
       ],
