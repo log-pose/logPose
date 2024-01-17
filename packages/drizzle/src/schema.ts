@@ -47,7 +47,7 @@ export const server = pgTable("server", {
   ip: varchar("ip"),
   port: integer("port"),
   server_name: varchar("server_name"),
-  connecton_string: varchar("connecton_string"),
+  connection_string: varchar("connection_string"),
   server_kind_id: uuid("server_kind_id")
     .references(() => server_kind.id)
     .notNull(),

@@ -1,0 +1,1 @@
+ALTER TABLE "server" RENAME COLUMN "connecton_string" TO "connection_string";
