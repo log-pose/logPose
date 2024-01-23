@@ -1,7 +1,6 @@
 version: "3"
 services:
   postgres:
-    container_name: postgres
     image: postgres:13-alpine
     volumes :
       - postgres:/var/lib/postgresql/data
@@ -11,12 +10,12 @@ services:
       - .env
     environment:
       - POSTGRES_USER=${PSQL_USER}
-      - POSTGRES_PASSWORD= ${PSQL_PASSWORD}
-      - POSTGRES_DB= postgres
+      - POSTGRES_PASSWORD=${PSQL_PASSWORD}
+      - POSTGRES_DB=${PSQL_DATABASE}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "postgres"]
+      test: ["CMD", "pg_isready", "-U", "${PSQL_USER}", "-d", "${PSQL_DATABASE}"]
       interval: 5s
-      1timeout: 30s
+      timeout: 10s
       retries: 5
   redis:
     container_name: redis
