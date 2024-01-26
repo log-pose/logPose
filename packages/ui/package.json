@@ -2,18 +2,33 @@
   "name": "@logpose/ui",
   "version": "0.0.0",
   "exports": {
+    "./style.css": "./dist/style.css",
     "./button": "./src/button.tsx"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
-    "lint": "eslint \"**/*.ts*\" --max-warnings 0"
+    "build": "tailwindcss -i ./src/style.css -o dist/style.css",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
+    "@logpose/eslint-config": "workspace:*",
+    "@logpose/typescript-config": "workspace:*",
+    "@logpose/tailwind-config": "workspace:*",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
     "eslint": "^8.54.0",
-    "@logpose/eslint-config": "workspace:*",
     "react": "^18.2.0",
-    "@logpose/typescript-config": "workspace:*",
     "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.316.0",
+    "tailwind-merge": "^2.2.1",
+    "tailwindcss": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "tsup": "^8.0.1"
   }
 }
