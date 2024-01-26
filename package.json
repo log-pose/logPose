@@ -11,7 +11,8 @@
     "lint": "turbo run lint",
     "initdb": "dotenv -- turbo run initdb",
     "migrate:up": "dotenv -- turbo run migrate:up",
-    "cron": "dotenv -- turbo run cron"
+    "cron": "dotenv -- turbo run cron",
+    "client:dev": "dotenv -- turbo run client:dev"
   },
   "dependencies": {
     "dotenv-cli": "^7.3.0"

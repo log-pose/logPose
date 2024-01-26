@@ -64,6 +64,12 @@
       "dotEnv": [
         ".env"
       ]
+    },
+    "client:dev": {
+      "cache": false,
+      "dotEnv": [
+        ".env"
+      ]
     }
   }
 }
