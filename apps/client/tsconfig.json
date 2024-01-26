@@ -1,6 +1,20 @@
 {
-  "extends": "@logpose/typescript-config/base.json",
+  "extends": "@logpose/typescript-config/next.json",
   "compilerOptions": {
-    "lib": ["ES2015"]
-  }
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "noEmit": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

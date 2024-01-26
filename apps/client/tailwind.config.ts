@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 import type { Config } from "tailwindcss";
 import sharedConfig from "@logpose/tailwind-config";
 
