@@ -70,6 +70,9 @@
       "dotEnv": [
         ".env"
       ]
+    },
+    "docs:build": {
+      "cache": true
     }
   }
 }
