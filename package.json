@@ -14,7 +14,8 @@
     "cron": "dotenv -- turbo run cron",
     "client:dev": "dotenv -- turbo run client:dev",
     "docs:build": "turbo run build --filter=docs",
-    "docs:dev": "turbo run dev --filter=docs"
+    "docs:dev": "turbo run dev --filter=docs",
+    "docs:preview": "turbo run preview --filter=docs"
   },
   "dependencies": {
     "dotenv-cli": "^7.3.0"
