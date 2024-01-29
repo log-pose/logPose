@@ -13,7 +13,8 @@
     "migrate:up": "dotenv -- turbo run migrate:up",
     "cron": "dotenv -- turbo run cron",
     "client:dev": "dotenv -- turbo run client:dev",
-    "docs:build": "turbo run docs:build"
+    "docs:build": "turbo run build --filter=docs",
+    "docs:dev": "turbo run dev --filter=docs"
   },
   "dependencies": {
     "dotenv-cli": "^7.3.0"
