@@ -2,7 +2,7 @@
 
 ## Flow Summary
 
-![User-Flow](./user_flow.png)
+![User-Flow](./assets/images/user_flow.png)
 
 1. **Initial Site Visit**
 
