@@ -1,0 +1,8 @@
+{
+    "init": {
+        "email": "root@logpose",
+        "password": "root",
+        "role": "admin",
+        "username": "root"
+    }
+}
