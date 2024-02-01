@@ -1,8 +1,21 @@
 {
-    "init": {
+    "sysadmin": {
         "email": "root@logpose",
         "password": "root",
         "role": "admin",
         "username": "root"
-    }
+    },
+    "servers": [
+        {
+            "kind": "tcp",
+            "ip": "8.8.8.8",
+            "serverName": "test-tcp",
+            "port": 53
+        },
+        {
+            "kind": "http",
+            "uri": "http://www.google.com",
+            "serverName": "test-http"
+        }
+    ]
 }
