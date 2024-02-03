@@ -5,6 +5,7 @@ import {
   uuid,
   varchar,
   integer,
+  unique,
   boolean,
 } from "drizzle-orm/pg-core";
 
@@ -40,23 +41,33 @@ export const server_kind = pgTable("server_kind", {
   created_at: timestamp("created_at").default(sql`now()`),
 });
 
-export const server = pgTable("server", {
-  id: uuid("id")
-    .default(sql`gen_random_uuid()`)
-    .primaryKey(),
-  ip: varchar("ip"),
-  port: integer("port"),
-  server_name: varchar("server_name"),
-  connection_string: varchar("connection_string"),
-  server_kind_id: uuid("server_kind_id")
-    .references(() => server_kind.id)
-    .notNull(),
-  heartbeat_interval: integer("heartbeat_interval").default(60),
-  retries: integer("retries").default(3),
-  user_id: uuid("user_id")
-    .references(() => user.id)
-    .notNull(),
-  last_updated: timestamp("last_updated").default(sql`now()`),
-  uri: varchar("uri"),
-  active: boolean("active").default(true),
-});
+export const server = pgTable(
+  "server",
+  {
+    id: uuid("id")
+      .default(sql`gen_random_uuid()`)
+      .primaryKey(),
+    ip: varchar("ip"),
+    port: integer("port"),
+    server_name: varchar("server_name"),
+    connection_string: varchar("connection_string"),
+    server_kind_id: uuid("server_kind_id")
+      .references(() => server_kind.id)
+      .notNull(),
+    heartbeat_interval: integer("heartbeat_interval").default(60),
+    retries: integer("retries").default(3),
+    user_id: uuid("user_id")
+      .references(() => user.id)
+      .notNull(),
+    last_updated: timestamp("last_updated").default(sql`now()`),
+    uri: varchar("uri"),
+    active: boolean("active").default(true),
+  },
+  (t) => ({
+    unique_name_user_kind: unique().on(
+      t.server_name,
+      t.user_id,
+      t.server_kind_id
+    ),
+  })
+);
