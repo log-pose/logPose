@@ -44,6 +44,9 @@ const register: RequestHandler = asyncHandler(
     const id = await createUser(email, username, password, roleId);
     const token = await getJWT(email, id);
 
+    if (!id) throw new ApiError(500, "Error creating user");
+    if (!token) throw new ApiError(500, "Error generating token");
+
     return res.status(200).json(
       new ApiResponse(
         200,
@@ -81,6 +84,7 @@ const login: RequestHandler = asyncHandler(
       throw new ApiError(400, "Invalid password");
     }
     const token = await getJWT(email, id);
+    if (!token) throw new ApiError(500, "Error generating token");
 
     return res.status(200).json(
       new ApiResponse(
