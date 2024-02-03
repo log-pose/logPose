@@ -41,6 +41,7 @@ export const createNewMonitor = async (newServer: any) => {
     .values({
       ...newServer,
     })
+    .onConflictDoNothing()
     .catch((err) => {
       throw err;
     });
