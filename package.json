@@ -9,7 +9,7 @@
     "api": "dotenv -- turbo run api",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
-    "initdb": "dotenv -- turbo run initdb",
+    "init:db": "dotenv -- turbo run initdb",
     "migrate:up": "dotenv -- turbo run migrate:up",
     "cron": "dotenv -- turbo run cron",
     "client:dev": "dotenv -- turbo run client:dev",
