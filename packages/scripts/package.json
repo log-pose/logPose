@@ -8,11 +8,14 @@
   ],
   "scripts": {
     "build": "tsc",
-    "initdb": "node ./dist/index.js"
+    "dev": "nodemon ./src/index.ts",
+    "initdb": "tsc && node ./dist/index.js"
   },
   "dependencies": {
     "@logpose/drizzle": "workspace:*",
-    "@logpose/logger": "workspace:*"
+    "@logpose/logger": "workspace:*",
+    "axios": "^1.6.7",
+    "commander": "^11.1.0"
   },
   "devDependencies": {
     "@logpose/eslint-config": "workspace:*",
@@ -20,6 +23,8 @@
     "esbuild": "^0.19.7",
     "esbuild-register": "^3.5.0",
     "eslint": "^8.54.0",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }
