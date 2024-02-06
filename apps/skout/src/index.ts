@@ -7,6 +7,7 @@ redisClient
   .connect()
   .then(() => {
     logger.info("Connected to Redis");
+    new Server();
   })
   .catch((err) => {
     logger.error("Error connecting to Redis", err);
@@ -14,6 +15,6 @@ redisClient
   });
 
 logger.info("Starting Monitoring");
-cron.schedule("*/10 * * * * *", async () => {
-  new Server();
-});
+// cron.schedule("*/10 * * * * *", async () => {
+// new Server();
+// });
