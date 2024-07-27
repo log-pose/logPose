@@ -1,8 +1,22 @@
-CREATE TABLE IF NOT EXISTS "roles" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"role_name" varchar,
+DO $$ BEGIN
+ CREATE TYPE "user_plan" AS ENUM('free');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "org_roles" AS ENUM('admin', 'read', 'write');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "organization" (
+	"id" uuid PRIMARY KEY DEFAULT 'gen_random_uuid()' NOT NULL,
+	"name" varchar,
+	"created_by" uuid,
 	"created_at" timestamp DEFAULT now(),
-	CONSTRAINT "roles_role_name_unique" UNIQUE("role_name")
+	"org_plan" "user_plan",
+	CONSTRAINT "organization_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "server" (
@@ -10,14 +24,15 @@ CREATE TABLE IF NOT EXISTS "server" (
 	"ip" varchar,
 	"port" integer,
 	"server_name" varchar,
-	"connecton_string" varchar,
+	"connection_string" varchar,
 	"server_kind_id" uuid NOT NULL,
 	"heartbeat_interval" integer DEFAULT 60,
 	"retries" integer DEFAULT 3,
 	"user_id" uuid NOT NULL,
 	"last_updated" timestamp DEFAULT now(),
 	"uri" varchar,
-	"active" boolean DEFAULT true
+	"active" boolean DEFAULT true,
+	CONSTRAINT "server_server_name_user_id_server_kind_id_unique" UNIQUE("server_name","user_id","server_kind_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "server_kind" (
@@ -37,10 +52,18 @@ CREATE TABLE IF NOT EXISTS "user" (
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "user_roles" (
+CREATE TABLE IF NOT EXISTS "user_org" (
 	"user_id" uuid,
-	"role_id" uuid
+	"org_id" uuid,
+	"role" "org_roles",
+	CONSTRAINT "user_org_org_id_user_id_unique" UNIQUE("org_id","user_id")
 );
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "organization" ADD CONSTRAINT "organization_created_by_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "user"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "server" ADD CONSTRAINT "server_server_kind_id_server_kind_id_fk" FOREIGN KEY ("server_kind_id") REFERENCES "server_kind"("id") ON DELETE no action ON UPDATE no action;
@@ -55,13 +78,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "user_org" ADD CONSTRAINT "user_org_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "user_org" ADD CONSTRAINT "user_org_org_id_organization_id_fk" FOREIGN KEY ("org_id") REFERENCES "organization"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

@@ -1,11 +1,11 @@
 {
-  "id": "ce2dbb74-3455-419b-850a-fd518da8f9f0",
+  "id": "4ead164f-9138-4836-a59e-2dd732d1f2d2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
-    "roles": {
-      "name": "roles",
+    "organization": {
+      "name": "organization",
       "schema": "",
       "columns": {
         "id": {
@@ -13,11 +13,17 @@
           "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "default": "gen_random_uuid()"
+          "default": "'gen_random_uuid()'"
         },
-        "role_name": {
-          "name": "role_name",
+        "name": {
+          "name": "name",
           "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -27,17 +33,37 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        },
+        "org_plan": {
+          "name": "org_plan",
+          "type": "user_plan",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "organization_created_by_user_id_fk": {
+          "name": "organization_created_by_user_id_fk",
+          "tableFrom": "organization",
+          "tableTo": "user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "roles_role_name_unique": {
-          "name": "roles_role_name_unique",
+        "organization_name_unique": {
+          "name": "organization_name_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "role_name"
+            "name"
           ]
         }
       }
@@ -71,8 +97,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "connecton_string": {
-          "name": "connecton_string",
+        "connection_string": {
+          "name": "connection_string",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -154,7 +180,17 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "server_server_name_user_id_server_kind_id_unique": {
+          "name": "server_server_name_user_id_server_kind_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "server_name",
+            "user_id",
+            "server_kind_id"
+          ]
+        }
+      }
     },
     "server_kind": {
       "name": "server_kind",
@@ -250,8 +286,8 @@
         }
       }
     },
-    "user_roles": {
-      "name": "user_roles",
+    "user_org": {
+      "name": "user_org",
       "schema": "",
       "columns": {
         "user_id": {
@@ -260,18 +296,24 @@
           "primaryKey": false,
           "notNull": false
         },
-        "role_id": {
-          "name": "role_id",
+        "org_id": {
+          "name": "org_id",
           "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "org_roles",
           "primaryKey": false,
           "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "user_roles_user_id_user_id_fk": {
-          "name": "user_roles_user_id_user_id_fk",
-          "tableFrom": "user_roles",
+        "user_org_user_id_user_id_fk": {
+          "name": "user_org_user_id_user_id_fk",
+          "tableFrom": "user_org",
           "tableTo": "user",
           "columnsFrom": [
             "user_id"
@@ -282,12 +324,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "user_roles_role_id_roles_id_fk": {
-          "name": "user_roles_role_id_roles_id_fk",
-          "tableFrom": "user_roles",
-          "tableTo": "roles",
+        "user_org_org_id_organization_id_fk": {
+          "name": "user_org_org_id_organization_id_fk",
+          "tableFrom": "user_org",
+          "tableTo": "organization",
           "columnsFrom": [
-            "role_id"
+            "org_id"
           ],
           "columnsTo": [
             "id"
@@ -297,10 +339,34 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "user_org_org_id_user_id_unique": {
+          "name": "user_org_org_id_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "org_id",
+            "user_id"
+          ]
+        }
+      }
     }
   },
-  "enums": {},
+  "enums": {
+    "user_plan": {
+      "name": "user_plan",
+      "values": {
+        "free": "free"
+      }
+    },
+    "org_roles": {
+      "name": "org_roles",
+      "values": {
+        "admin": "admin",
+        "read": "read",
+        "write": "write"
+      }
+    }
+  },
   "schemas": {},
   "_meta": {
     "columns": {},
