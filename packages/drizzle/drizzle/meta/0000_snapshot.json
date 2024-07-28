@@ -1,5 +1,5 @@
 {
-  "id": "4ead164f-9138-4836-a59e-2dd732d1f2d2",
+  "id": "33d1e341-fbbd-4e27-9e4e-215670307761",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -13,10 +13,10 @@
           "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "default": "'gen_random_uuid()'"
+          "default": "gen_random_uuid()"
         },
-        "name": {
-          "name": "name",
+        "org_name": {
+          "name": "org_name",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -58,15 +58,7 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "organization_name_unique": {
-          "name": "organization_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "server": {
       "name": "server",

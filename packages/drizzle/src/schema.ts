@@ -12,8 +12,10 @@ import {
 
 export const orgPlans = pgEnum("user_plan", ["free"])
 export const org = pgTable("organization", {
-	id: uuid("id").default(`gen_random_uuid()`).primaryKey(),
-	name: varchar("name").unique(),
+	id: uuid("id")
+		.default(sql`gen_random_uuid()`)
+		.primaryKey(),
+	name: varchar("org_name"),
 	created_by: uuid("created_by").references(() => user.id),
 	created_at: timestamp("created_at").default(sql`now()`),
 	plan: orgPlans("org_plan")

@@ -11,12 +11,11 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "organization" (
-	"id" uuid PRIMARY KEY DEFAULT 'gen_random_uuid()' NOT NULL,
-	"name" varchar,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"org_name" varchar,
 	"created_by" uuid,
 	"created_at" timestamp DEFAULT now(),
-	"org_plan" "user_plan",
-	CONSTRAINT "organization_name_unique" UNIQUE("name")
+	"org_plan" "user_plan"
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "server" (
