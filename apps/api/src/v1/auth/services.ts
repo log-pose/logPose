@@ -11,6 +11,12 @@ const hashPassword = async (password: string) => {
 	return hash;
 };
 
+
+export const verifyPassword = async (password: string, hash: string) => {
+	const match = await bcrypt.compare(password, hash);
+	return match;
+};
+
 export const checkUserExists = async (email: string) => {
 	const result = await psqlClient
 		.select({
@@ -52,3 +58,5 @@ export const getJWT = async (email: string, id: string) => {
 
 	return jwt.sign(objToSign, JWT_SECRET, {expiresIn: "1d"});
 };
+
+
