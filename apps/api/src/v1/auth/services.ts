@@ -31,7 +31,7 @@ export const checkUserExists = async (email: string) => {
 	if (result.length === 0) {
 		return null;
 	}
-	return result;
+	return result[0];
 };
 
 export const createUser = async (

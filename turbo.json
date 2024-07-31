@@ -49,9 +49,6 @@
     },
     "api": {
       "cache": false,
-      "dependsOn": [
-        "initdb"
-      ],
       "dotEnv": [
         ".env"
       ]
