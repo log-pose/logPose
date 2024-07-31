@@ -1,16 +1,11 @@
 import {RequestHandler, Request, Response} from "express";
 import {ApiError, ApiResponse, asyncHandler} from "../../utils";
-import z from "zod";
+import {auth} from "../../zod";
 import {checkUserExists, createUser, getJWT, verifyPassword} from "./services";
 
-const registerSchema = z.object({
-	username: z.string(),
-	email: z.string().email(),
-	password: z.string()
-})
 
 export const register: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
-	const validInput = registerSchema.safeParse(req.body)
+	const validInput = auth.registerSchema.safeParse(req.body)
 
 	if (!validInput.success) {
 		throw new ApiError(400, "Please check if required fields are present")
@@ -38,13 +33,9 @@ export const register: RequestHandler = asyncHandler(async (req: Request, res: R
 
 })
 
-const loginSchema = z.object({
-	email: z.string().email(),
-	password: z.string()
-})
 
 export const login: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
-	const validInput = loginSchema.safeParse(req.body)
+	const validInput = auth.loginSchema.safeParse(req.body)
 
 	if (!validInput.success) {
 		throw new ApiError(400, "Check if all required fields are present")
