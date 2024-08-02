@@ -15,7 +15,7 @@ export const org = pgTable("organization", {
 	id: uuid("id")
 		.default(sql`gen_random_uuid()`)
 		.primaryKey(),
-	name: varchar("org_name"),
+	name: varchar("org_name").unique(),
 	created_by: uuid("created_by").references(() => user.id),
 	created_at: timestamp("created_at").default(sql`now()`),
 	plan: orgPlans("org_plan")
