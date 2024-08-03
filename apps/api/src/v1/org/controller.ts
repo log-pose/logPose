@@ -21,12 +21,12 @@ export const createOrg: RequestHandler = asyncHandler(async (req: IRequest, res:
 })
 
 export const getOrgById: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
-	// TODO: to check if the user has access to the org
 	const {orgId} = req.params;
+	const {id: userId} = req.user;
 	if (!orgId) {
 		throw new ApiError(400, "id is required")
 	}
-	const org = await service.getOrgById(orgId)
+	const org = await service.getOrgById(orgId, userId)
 	console.log(org)
 	res.status(200).json(new ApiResponse(200, org))
 })
@@ -39,7 +39,7 @@ export const deleteOrg: RequestHandler = asyncHandler(async (req: Request, res: 
 // userToinvite
 // orgId
 export const inviteUserToOrg: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
-	const {userToInvite, invitedOrg} = req.body
+	const {userToInvite, invitedOrg, invitedRole} = req.body
 })
 export const removeUserFromOrg: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
 
