@@ -9,4 +9,5 @@ const router: Router = Router();
 router.post("/", verifyExpress, createOrg)
 router.get("/", verifyExpress, getUserOrg)
 router.get("/:orgId", verifyExpress, getOrgById)
+router.put("/:orgId", verifyExpress, editOrg)
 export default router;
