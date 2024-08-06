@@ -7,5 +7,6 @@ import {verifyExpress} from "../../middleware/auth";
 const router: Router = Router();
 
 router.post("/", verifyExpress, createOrg)
+router.get("/", verifyExpress, getUserOrg)
 router.get("/:orgId", verifyExpress, getOrgById)
 export default router;

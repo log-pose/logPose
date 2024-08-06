@@ -31,7 +31,25 @@ export const getOrgById: RequestHandler = asyncHandler(async (req: IRequest, res
 	res.status(200).json(new ApiResponse(200, org))
 })
 
-export const getUserOrg: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
+export const getUserOrg: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
+	const {limit, pageNumber} = req.query
+	const {id: userId} = req.user
+
+	if (parseInt(pageNumber as string) < 1) {
+		throw new ApiError(400, "Not a valid page number")
+	}
+
+	const response = await service.getUserOrg(userId, parseInt(limit as string), parseInt(pageNumber as string))
+
+	res.status(200).json(
+		new ApiResponse(200, response.orgs, "user organizations fetched successfully", {
+			isNext: response.isNext,
+			isPrev: response.isPrev,
+			pageNumber,
+			limit
+		})
+	)
+})
 export const editOrg: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
 export const deleteOrg: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
 
