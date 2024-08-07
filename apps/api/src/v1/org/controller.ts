@@ -67,12 +67,29 @@ export const editOrg: RequestHandler = asyncHandler(async (req: IRequest, res: R
 	}
 
 	res.status(200).json(
-		new ApiResponse(200, "updated org")
+		new ApiResponse(200, "Updated org")
 	)
 
 })
 
-export const deleteOrg: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
+export const deleteOrg: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
+	const {orgId} = req.params;
+	const {id: userId} = req.user;
+
+	const isUserValid = await service.checkIfValidUser(userId, orgId, 'admin')
+	if (!isUserValid) {
+		throw new ApiError(403, "You cannot perform this operation")
+	}
+
+	const deletedOrgId = await service.deleteOrg(orgId)
+	if (!deleteOrg || deletedOrgId !== orgId) {
+		throw new ApiError(500, "Something went wrong")
+	}
+
+	res.status(200).json(
+		new ApiResponse(200, "Deleted org")
+	)
+})
 
 
 // userToinvite

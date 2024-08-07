@@ -87,6 +87,15 @@ export const updateOrg = async (orgId: string, name: string) => {
 		)
 	return updatedIdRows[0].id
 }
+
+export const deleteOrg = async (orgId: string) => {
+	return await psqlClient.transaction(async (trx) => {
+		await trx.delete(userOrg).where(eq(userOrg.orgId, orgId))
+		const deletedOrg = await trx.delete(org).where(eq(org.id, orgId)).returning()
+		return deletedOrg[0].id
+	})
+}
+
 export const assignUserToOrg = async (orgId: string, userId: string, role: TOrgRoles) => {
 	await psqlClient.insert(userOrg).values([{
 		userId, orgId, role
