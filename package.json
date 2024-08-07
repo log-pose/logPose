@@ -9,13 +9,9 @@
     "api": "dotenv -- turbo run api",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
-    "init:db": "dotenv -- turbo run initdb",
     "migrate:up": "dotenv -- turbo run migrate:up",
     "cron": "dotenv -- turbo run cron",
-    "client:dev": "dotenv -- turbo run client:dev",
-    "docs:build": "turbo run build --filter=docs",
-    "docs:dev": "turbo run dev --filter=docs",
-    "docs:preview": "turbo run preview --filter=docs"
+    "client:dev": "dotenv -- turbo run client:dev"
   },
   "dependencies": {
     "dotenv-cli": "^7.3.0"
