@@ -11,5 +11,6 @@ router.get("/", verifyExpress, getUserOrg)
 router.get("/:orgId", verifyExpress, getOrgById)
 router.put("/:orgId", verifyExpress, editOrg)
 router.delete("/:orgId", verifyExpress, deleteOrg)
+router.post("/invite/:orgId", verifyExpress, inviteUserToOrg)
 
 export default router;

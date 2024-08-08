@@ -1,6 +1,10 @@
-import {org, and, psqlClient, eq, userOrg} from "@logpose/drizzle"
+import {org, orgInvite, and, psqlClient, eq, userOrg, user} from "@logpose/drizzle"
+import z from "zod"
+import {orgRolesSchema} from "../../zod/org"
+import {sendEmail} from "@logpose/utils"
+import crypto from "node:crypto"
 
-type TOrgRoles = 'read' | 'write' | 'admin'
+type TOrgRoles = z.infer<typeof orgRolesSchema>
 
 export const createOrg = async (orgName: string, userId: string) => {
 	return await psqlClient.transaction(async (trx) => {
@@ -94,6 +98,34 @@ export const deleteOrg = async (orgId: string) => {
 		const deletedOrg = await trx.delete(org).where(eq(org.id, orgId)).returning()
 		return deletedOrg[0].id
 	})
+}
+
+export const getUserById = async (userId: string) => {
+	const userRow = await psqlClient.select().from(user).limit(1)
+	return userRow[0]
+}
+
+export const saveInviteToken = async (invitedRole: TOrgRoles, invitee: string, inviter: string, orgId: string) => {
+	const randomToken = crypto.randomBytes(4).toString('hex') // keeping it small 
+	await psqlClient.insert(orgInvite).values({
+		token: randomToken,
+		invitedRole: invitedRole,
+		invitee: invitee,
+		inviter: inviter,
+		orgId: orgId
+	})
+
+	return randomToken
+}
+export const sendInviteMail = async (toEmail: string, orgName: string, username: string, token: string) => {
+	const html = `<a href="http://localhost:8000/api/v1/org/join/${token}">Join now</a>`
+	const {data, error} = await sendEmail(
+		"Log Pose <no-reply@sebzz.tech>",
+		[toEmail],
+		`${username} has invited you to join ${orgName}`,
+		html
+	)
+	return {data, error}
 }
 
 export const assignUserToOrg = async (orgId: string, userId: string, role: TOrgRoles) => {

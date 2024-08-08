@@ -91,12 +91,31 @@ export const deleteOrg: RequestHandler = asyncHandler(async (req: IRequest, res:
 	)
 })
 
-
-// userToinvite
-// orgId
 export const inviteUserToOrg: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
-	const {userToInvite, invitedOrg, invitedRole} = req.body
+	const {orgId} = req.params
+	const {userToInvite, invitedUserRole} = req.body
+	const {id: userId} = req.user;
+	const validInputSchema = org.inviteUserToOrgSchema.safeParse(req.body)
+
+	if (!validInputSchema.success) {
+		throw new ApiError(400, "Please check if required fields are present")
+	}
+
+	const isUserValid = await service.checkIfValidUser(userId, orgId, 'admin')
+	if (!isUserValid) {
+		throw new ApiError(403, "You cannot perform this operation")
+	}
+
+	const userOrg = await service.getOrgById(orgId, userId)
+	const userDetails = await service.getUserById(userId)
+	const token = await service.saveInviteToken(invitedUserRole, userToInvite, userId, orgId)
+	const {data: _, error} = await service.sendInviteMail(userToInvite, userOrg.name as string, userDetails.username as string, token)
+	if (error) {
+		throw new ApiError(500, "Something went wrong")
+	}
+	res.status(200).json(new ApiResponse(200, "User invited to org"))
 })
+
 export const removeUserFromOrg: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
 
 export const acceptInvite: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})

@@ -34,13 +34,24 @@ export const userOrg = pgTable("user_org", {
 	)
 }))
 
+export const orgInvite = pgTable("org_invite", {
+	token: varchar("token").primaryKey(),
+	timestamp: integer('timestamp')
+		.notNull()
+		.default(sql`extract(epoch from now())`),
+	invitee: varchar("invitee").notNull(),
+	invitedRole: orgRoles('role'),
+	inviter: uuid('inviter').references(() => user.id),
+	orgId: uuid("org_id").references(() => org.id)
+})
+
 export const user = pgTable("user", {
 	id: uuid("id")
 		.default(sql`gen_random_uuid()`)
 		.primaryKey(),
-	username: varchar("username"),
-	password: varchar("password"),
-	email: varchar("email").unique(),
+	username: varchar("username").notNull(),
+	password: varchar("password").notNull(),
+	email: varchar("email").unique().notNull(),
 	created_at: timestamp("created_at").default(sql`now()`),
 });
 

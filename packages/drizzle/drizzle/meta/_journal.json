@@ -15,6 +15,13 @@
       "when": 1722568730303,
       "tag": "0001_nasty_winter_soldier",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1723059377837,
+      "tag": "0002_nappy_ozymandias",
+      "breakpoints": true
     }
   ]
 }
