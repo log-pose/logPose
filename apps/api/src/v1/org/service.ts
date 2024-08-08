@@ -101,7 +101,7 @@ export const deleteOrg = async (orgId: string) => {
 }
 
 export const getUserById = async (userId: string) => {
-	const userRow = await psqlClient.select().from(user).limit(1)
+	const userRow = await psqlClient.select().from(user).where(eq(user.id, userId))
 	return userRow[0]
 }
 
