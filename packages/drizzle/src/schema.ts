@@ -40,9 +40,9 @@ export const orgInvite = pgTable("org_invite", {
 		.notNull()
 		.default(sql`extract(epoch from now())`),
 	invitee: varchar("invitee").notNull(),
-	invitedRole: orgRoles('role'),
-	inviter: uuid('inviter').references(() => user.id),
-	orgId: uuid("org_id").references(() => org.id)
+	invitedRole: orgRoles('role').notNull(),
+	inviter: uuid('inviter').references(() => user.id).notNull(),
+	orgId: uuid("org_id").references(() => org.id).notNull()
 })
 
 export const user = pgTable("user", {

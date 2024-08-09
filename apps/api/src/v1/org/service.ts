@@ -36,7 +36,7 @@ export const getOrgById = async (orgId: string, userId: string) => {
 	return orgObj.org
 }
 
-export const getUserOrg = async (userId: string, limit: number, page: number) => {
+export const getUserOrgById = async (userId: string, limit: number, page: number) => {
 	const orgs = await psqlClient.select({org}).from(org).leftJoin(
 		userOrg, eq(
 			userOrg.orgId, org.id
@@ -60,6 +60,7 @@ export const getUserOrg = async (userId: string, limit: number, page: number) =>
 		isPrev: page <= 1 ? false : true
 	}
 }
+
 export const checkIfValidUser = async (userId: string, orgId: string, orgRole: TOrgRoles) => {
 	const rows = await psqlClient.select().from(userOrg).where(and(
 		eq(
@@ -118,7 +119,7 @@ export const saveInviteToken = async (invitedRole: TOrgRoles, invitee: string, i
 	return randomToken
 }
 export const sendInviteMail = async (toEmail: string, orgName: string, username: string, token: string) => {
-	const html = `<a href="http://localhost:8000/api/v1/org/join/${token}">Join now</a>`
+	const html = `<a href="http://localhost:8000/org/join/${token}">Join now</a>`
 	const {data, error} = await sendEmail(
 		"Log Pose <no-reply@sebzz.tech>",
 		[toEmail],
@@ -128,6 +129,47 @@ export const sendInviteMail = async (toEmail: string, orgName: string, username:
 	return {data, error}
 }
 
+export const getTokenInfo = async (token: string) => {
+	const tokenArr = await psqlClient.select().from(orgInvite).where(eq(orgInvite.token, token))
+	const TIMEOUT = 60 * 60 * 24 // day in seconds 
+	if (tokenArr.length > 0 && parseInt(Date.now() / 1000 as any) - tokenArr[0].timestamp <= TIMEOUT) {
+		return tokenArr[0]
+	}
+	return null
+}
+
+export const checkIfUserAlreadyMember = async (userEmail: string, orgId: string) => {
+	const res = await psqlClient.select({user}).from(user).leftJoin(
+		userOrg, eq(
+			userOrg.userId, user.id
+		)
+	).where(
+		and(
+			eq(
+				user.email, userEmail
+			),
+			eq(
+				userOrg.orgId, orgId
+			)
+		)
+	)
+	return res.length === 0 ? false : true
+}
+
+export const joinOrg = async (inviteToken: string, userId: string, orgId: string, orgRole: TOrgRoles) => {
+	await psqlClient.transaction(async (trx) => {
+
+		await trx.insert(userOrg).values([{
+			userId,
+			orgId: orgId,
+			role: orgRole,
+		}])
+
+		await trx.delete(orgInvite).where(eq(
+			orgInvite.token, inviteToken
+		))
+	})
+}
 export const assignUserToOrg = async (orgId: string, userId: string, role: TOrgRoles) => {
 	await psqlClient.insert(userOrg).values([{
 		userId, orgId, role

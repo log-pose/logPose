@@ -39,8 +39,7 @@ export const getUserOrg: RequestHandler = asyncHandler(async (req: IRequest, res
 		throw new ApiError(400, "Not a valid page number")
 	}
 
-	const response = await service.getUserOrg(userId, parseInt(limit as string), parseInt(pageNumber as string))
-
+	const response = await service.getUserOrgById(userId, parseInt(limit as string), parseInt(pageNumber as string))
 	res.status(200).json(
 		new ApiResponse(200, response.orgs, "user organizations fetched successfully", {
 			isNext: response.isNext,
@@ -106,6 +105,11 @@ export const inviteUserToOrg: RequestHandler = asyncHandler(async (req: IRequest
 		throw new ApiError(403, "You cannot perform this operation")
 	}
 
+	const ifAlreadyMember = await service.checkIfUserAlreadyMember(userToInvite, orgId)
+	if (ifAlreadyMember) {
+		throw new ApiError(400, "User is already a member")
+	}
+
 	const userOrg = await service.getOrgById(orgId, userId)
 	const userDetails = await service.getUserById(userId)
 	const token = await service.saveInviteToken(invitedUserRole, userToInvite, userId, orgId)
@@ -113,12 +117,36 @@ export const inviteUserToOrg: RequestHandler = asyncHandler(async (req: IRequest
 	if (error) {
 		throw new ApiError(500, "Something went wrong")
 	}
-	res.status(200).json(new ApiResponse(200, "User invited to org"))
+	res.status(200).json(new ApiResponse(200, null, "User invited to org"))
+})
+
+export const acceptInvite: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
+	const {id: userId} = req.user
+	const {joinToken} = req.params
+
+	const tokenInfo = await service.getTokenInfo(joinToken)
+	if (!tokenInfo) {
+		throw new ApiError(400, "Invite Expired!")
+	}
+
+	const userInfo = await service.getUserById(userId)
+	if (userInfo.email !== tokenInfo.invitee) {
+		throw new ApiError(403, "Forbidden")
+	}
+
+	const ifAlreadyMember = await service.checkIfUserAlreadyMember(tokenInfo.invitee, tokenInfo.orgId)
+	if (ifAlreadyMember) {
+		throw new ApiError(400, "User is already a member")
+	}
+
+	await service.joinOrg(joinToken, userId, tokenInfo.orgId, tokenInfo.invitedRole)
+	res.status(200).json(
+		new ApiResponse(200, null, "User joined org successfully")
+	)
 })
 
 export const removeUserFromOrg: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
 
-export const acceptInvite: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
 export const exitOrg: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
 export const getOrgMembers: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
 export const modifyUserOrgRole: RequestHandler = asyncHandler(async (req: Request, res: Response) => {})
