@@ -9,20 +9,19 @@
     "api": "dotenv -- turbo run api",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
-    "migrate:up": "dotenv -- turbo run migrate:up",
     "cron": "dotenv -- turbo run cron",
     "client:dev": "dotenv -- turbo run client:dev"
   },
   "dependencies": {
-    "dotenv-cli": "^7.3.0"
+    "dotenv-cli": "^7.4.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.4.3",
-    "@commitlint/config-conventional": "^18.4.3",
+    "@commitlint/cli": "^18.6.1",
+    "@commitlint/config-conventional": "^18.6.3",
     "@logpose/eslint-config": "workspace:*",
     "husky": "^8.0.3",
-    "prettier": "^3.1.0",
-    "turbo": "^1.11.3"
+    "prettier": "^3.3.3",
+    "turbo": "^1.13.4"
   },
   "engines": {
     "node": ">=14.0.0",

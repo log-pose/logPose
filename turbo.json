@@ -38,9 +38,6 @@
     "clean": {
       "cache": false
     },
-    "migrate:up": {
-      "cache": false
-    },
     "api": {
       "cache": false,
       "dotEnv": [
