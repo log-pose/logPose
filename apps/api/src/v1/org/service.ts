@@ -46,7 +46,6 @@ export const getUserOrgById = async (userId: string, limit: number, page: number
 			userOrg.userId, userId
 		)
 	).limit(limit + 1).offset((page - 1) * page)
-
 	if (orgs.length === limit + 1) {
 		return {
 			orgs: orgs.slice(0, -1),
@@ -73,7 +72,6 @@ export const checkIfValidUser = async (userId: string, orgId: string, orgRole: T
 			userOrg.role, orgRole
 		)
 	)).limit(1)
-
 	if (rows.length < 1) {
 		return false
 	}
@@ -115,9 +113,9 @@ export const saveInviteToken = async (invitedRole: TOrgRoles, invitee: string, i
 		inviter: inviter,
 		orgId: orgId
 	})
-
 	return randomToken
 }
+
 export const sendInviteMail = async (toEmail: string, orgName: string, username: string, token: string) => {
 	const html = `<a href="http://localhost:8000/org/join/${token}">Join now</a>`
 	const {data, error} = await sendEmail(
@@ -158,20 +156,54 @@ export const checkIfUserAlreadyMember = async (userEmail: string, orgId: string)
 
 export const joinOrg = async (inviteToken: string, userId: string, orgId: string, orgRole: TOrgRoles) => {
 	await psqlClient.transaction(async (trx) => {
-
 		await trx.insert(userOrg).values([{
 			userId,
 			orgId: orgId,
 			role: orgRole,
 		}])
-
 		await trx.delete(orgInvite).where(eq(
 			orgInvite.token, inviteToken
 		))
 	})
 }
+
 export const assignUserToOrg = async (orgId: string, userId: string, role: TOrgRoles) => {
 	await psqlClient.insert(userOrg).values([{
 		userId, orgId, role
 	}])
+}
+
+export const removeUser = async (orgId: string, userId: string) => {
+	await psqlClient.delete(userOrg).where(and(
+		eq(userOrg.orgId, orgId),
+		eq(userOrg.userId, userId)))
+}
+
+export const getOrgUser = async (orgId: string, limit: number, page: number) => {
+	const orgs = await psqlClient.select().from(userOrg).where(
+		eq(
+			userOrg.orgId, orgId
+		)
+	).limit(limit + 1).offset((page - 1) * page)
+	if (orgs.length === limit + 1) {
+		return {
+			orgs: orgs.slice(0, -1),
+			isNext: true,
+			isPrev: page <= 1 ? false : true
+		}
+	}
+	return {
+		orgs,
+		isNext: false,
+		isPrev: page <= 1 ? false : true
+	}
+}
+
+export const updateUserOrgRole = async (userId: string, orgId: string, userOrgRole: TOrgRoles) => {
+	await psqlClient.update(userOrg).set({
+		role: userOrgRole
+	}).where(and(
+		eq(userOrg.orgId, orgId),
+		eq(userOrg.userId, userId)
+	))
 }

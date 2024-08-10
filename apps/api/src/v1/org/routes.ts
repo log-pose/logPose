@@ -13,5 +13,9 @@ router.put("/:orgId", verifyExpress, editOrg)
 router.delete("/:orgId", verifyExpress, deleteOrg)
 router.post("/invite/:orgId", verifyExpress, inviteUserToOrg)
 router.post("/join/:joinToken", verifyExpress, acceptInvite)
+router.delete("/user/:orgId", verifyExpress, removeUserFromOrg)
+router.delete("/exit/:orgId", verifyExpress, exitOrg)
+router.get("/members/:orgId", verifyExpress, getOrgMembers)
+router.put("/role/:orgId", verifyExpress, modifyUserOrgRole)
 
 export default router;
