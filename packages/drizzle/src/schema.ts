@@ -1,4 +1,5 @@
 import {sql} from "drizzle-orm";
+import {json} from "drizzle-orm/pg-core";
 import {
 	pgTable,
 	timestamp,
@@ -55,14 +56,6 @@ export const user = pgTable("user", {
 	created_at: timestamp("created_at").default(sql`now()`),
 });
 
-export const server_kind = pgTable("server_kind", {
-	id: uuid("id")
-		.default(sql`gen_random_uuid()`)
-		.primaryKey(),
-	kind_name: varchar("kind_name").unique().notNull(),
-	required_fields: varchar("required_fields").notNull(),
-	created_at: timestamp("created_at").default(sql`now()`),
-});
 
 export const server = pgTable(
 	"server",
@@ -70,27 +63,18 @@ export const server = pgTable(
 		id: uuid("id")
 			.default(sql`gen_random_uuid()`)
 			.primaryKey(),
-		ip: varchar("ip"),
-		port: integer("port"),
 		server_name: varchar("server_name"),
-		connection_string: varchar("connection_string"),
-		server_kind_id: uuid("server_kind_id")
-			.references(() => server_kind.id)
-			.notNull(),
-		heartbeat_interval: integer("heartbeat_interval").default(60),
-		retries: integer("retries").default(3),
-		user_id: uuid("user_id")
-			.references(() => user.id)
-			.notNull(),
 		last_updated: timestamp("last_updated").default(sql`now()`),
-		uri: varchar("uri"),
 		active: boolean("active").default(true),
+		properties: json("properties"),
+		org_id: uuid("org_id")
+			.references(() => org.id)
+			.notNull(),
 	},
 	(t) => ({
-		unique_name_user_kind: unique().on(
+		unique_name_org: unique().on(
 			t.server_name,
-			t.user_id,
-			t.server_kind_id
+			t.org_id,
 		),
 	})
 );
