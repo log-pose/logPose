@@ -9,7 +9,6 @@
     "api": "dotenv -- turbo run api",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
-    "cron": "dotenv -- turbo run cron",
     "client:dev": "dotenv -- turbo run client:dev"
   },
   "dependencies": {

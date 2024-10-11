@@ -44,15 +44,6 @@
         ".env"
       ]
     },
-    "cron": {
-      "cache": false,
-      "dependsOn": [
-        "initdb"
-      ],
-      "dotEnv": [
-        ".env"
-      ]
-    },
     "client:dev": {
       "cache": false,
       "dotEnv": [
