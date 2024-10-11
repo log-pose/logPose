@@ -57,24 +57,3 @@ export const user = pgTable("user", {
 });
 
 
-export const server = pgTable(
-	"server",
-	{
-		id: uuid("id")
-			.default(sql`gen_random_uuid()`)
-			.primaryKey(),
-		server_name: varchar("server_name"),
-		last_updated: timestamp("last_updated").default(sql`now()`),
-		active: boolean("active").default(true),
-		properties: json("properties"),
-		org_id: uuid("org_id")
-			.references(() => org.id)
-			.notNull(),
-	},
-	(t) => ({
-		unique_name_org: unique().on(
-			t.server_name,
-			t.org_id,
-		),
-	})
-);

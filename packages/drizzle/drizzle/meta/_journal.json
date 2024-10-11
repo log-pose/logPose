@@ -1,40 +1,12 @@
 {
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1722176563588,
-      "tag": "0000_magical_steve_rogers",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1722568730303,
-      "tag": "0001_nasty_winter_soldier",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1723059377837,
-      "tag": "0002_nappy_ozymandias",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1723177451583,
-      "tag": "0003_acoustic_scarlet_spider",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1723320480780,
-      "tag": "0004_mushy_brother_voodoo",
+      "version": "7",
+      "when": 1728638739161,
+      "tag": "0000_orange_moon_knight",
       "breakpoints": true
     }
   ]

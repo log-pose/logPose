@@ -1,10 +1,10 @@
 {
-  "id": "33d1e341-fbbd-4e27-9e4e-215670307761",
+  "id": "30a1e3a1-854f-4d8a-86e5-84c11efe66f3",
   "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "organization": {
+    "public.organization": {
       "name": "organization",
       "schema": "",
       "columns": {
@@ -37,6 +37,7 @@
         "org_plan": {
           "name": "org_plan",
           "type": "user_plan",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         }
@@ -58,111 +59,80 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "organization_org_name_unique": {
+          "name": "organization_org_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "org_name"
+          ]
+        }
+      }
     },
-    "server": {
-      "name": "server",
+    "public.org_invite": {
+      "name": "org_invite",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
+        "token": {
+          "name": "token",
+          "type": "varchar",
           "primaryKey": true,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "integer",
+          "primaryKey": false,
           "notNull": true,
-          "default": "gen_random_uuid()"
+          "default": "extract(epoch from now())"
         },
-        "ip": {
-          "name": "ip",
+        "invitee": {
+          "name": "invitee",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "port": {
-          "name": "port",
-          "type": "integer",
+        "role": {
+          "name": "role",
+          "type": "org_roles",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "server_name": {
-          "name": "server_name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "connection_string": {
-          "name": "connection_string",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "server_kind_id": {
-          "name": "server_kind_id",
+        "inviter": {
+          "name": "inviter",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "heartbeat_interval": {
-          "name": "heartbeat_interval",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 60
-        },
-        "retries": {
-          "name": "retries",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 3
-        },
-        "user_id": {
-          "name": "user_id",
+        "org_id": {
+          "name": "org_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
-        },
-        "last_updated": {
-          "name": "last_updated",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "uri": {
-          "name": "uri",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "active": {
-          "name": "active",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "server_server_kind_id_server_kind_id_fk": {
-          "name": "server_server_kind_id_server_kind_id_fk",
-          "tableFrom": "server",
-          "tableTo": "server_kind",
-          "columnsFrom": [
-            "server_kind_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "server_user_id_user_id_fk": {
-          "name": "server_user_id_user_id_fk",
-          "tableFrom": "server",
+        "org_invite_inviter_user_id_fk": {
+          "name": "org_invite_inviter_user_id_fk",
+          "tableFrom": "org_invite",
           "tableTo": "user",
           "columnsFrom": [
-            "user_id"
+            "inviter"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "org_invite_org_id_organization_id_fk": {
+          "name": "org_invite_org_id_organization_id_fk",
+          "tableFrom": "org_invite",
+          "tableTo": "organization",
+          "columnsFrom": [
+            "org_id"
           ],
           "columnsTo": [
             "id"
@@ -172,63 +142,9 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "server_server_name_user_id_server_kind_id_unique": {
-          "name": "server_server_name_user_id_server_kind_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "server_name",
-            "user_id",
-            "server_kind_id"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
-    "server_kind": {
-      "name": "server_kind",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "kind_name": {
-          "name": "kind_name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "required_fields": {
-          "name": "required_fields",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "server_kind_kind_name_unique": {
-          "name": "server_kind_kind_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "kind_name"
-          ]
-        }
-      }
-    },
-    "user": {
+    "public.user": {
       "name": "user",
       "schema": "",
       "columns": {
@@ -243,19 +159,19 @@
           "name": "username",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "password": {
           "name": "password",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "email": {
           "name": "email",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -278,7 +194,7 @@
         }
       }
     },
-    "user_org": {
+    "public.user_org": {
       "name": "user_org",
       "schema": "",
       "columns": {
@@ -297,6 +213,7 @@
         "role": {
           "name": "role",
           "type": "org_roles",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         }
@@ -344,22 +261,25 @@
     }
   },
   "enums": {
-    "user_plan": {
+    "public.user_plan": {
       "name": "user_plan",
-      "values": {
-        "free": "free"
-      }
+      "schema": "public",
+      "values": [
+        "free"
+      ]
     },
-    "org_roles": {
+    "public.org_roles": {
       "name": "org_roles",
-      "values": {
-        "admin": "admin",
-        "read": "read",
-        "write": "write"
-      }
+      "schema": "public",
+      "values": [
+        "admin",
+        "read",
+        "write"
+      ]
     }
   },
   "schemas": {},
+  "sequences": {},
   "_meta": {
     "columns": {},
     "schemas": {},
