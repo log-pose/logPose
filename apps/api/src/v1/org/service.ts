@@ -1,4 +1,4 @@
-import {org, orgInvite, and, psqlClient, eq, userOrg, user} from "@logpose/drizzle"
+import {and, eq, monitors, org, orgInvite, psqlClient, user, userOrg} from "@logpose/drizzle"
 import z from "zod"
 import {orgRolesSchema} from "../../zod/org"
 import {sendEmail} from "@logpose/utils"
@@ -50,13 +50,13 @@ export const getUserOrgById = async (userId: string, limit: number, page: number
 		return {
 			orgs: orgs.slice(0, -1),
 			isNext: true,
-			isPrev: page <= 1 ? false : true
+			isPrev: page > 1
 		}
 	}
 	return {
 		orgs,
 		isNext: false,
-		isPrev: page <= 1 ? false : true
+		isPrev: page > 1
 	}
 }
 
@@ -151,7 +151,7 @@ export const checkIfUserAlreadyMember = async (userEmail: string, orgId: string)
 			)
 		)
 	)
-	return res.length === 0 ? false : true
+	return res.length !== 0
 }
 
 export const joinOrg = async (inviteToken: string, userId: string, orgId: string, orgRole: TOrgRoles) => {
@@ -195,7 +195,7 @@ export const getOrgUser = async (orgId: string, limit: number, page: number) => 
 	return {
 		orgs,
 		isNext: false,
-		isPrev: page <= 1 ? false : true
+		isPrev: page > 1
 	}
 }
 
@@ -206,4 +206,14 @@ export const updateUserOrgRole = async (userId: string, orgId: string, userOrgRo
 		eq(userOrg.orgId, orgId),
 		eq(userOrg.userId, userId)
 	))
+}
+
+export const getMonitors = async (orgId: string) => {
+	return psqlClient.select({
+		id: monitors.id,
+		name: monitors.name,
+		kind: monitors.kind
+	}).from(monitors).where(
+		eq(monitors.orgId, orgId)
+	)
 }

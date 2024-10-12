@@ -1,6 +1,17 @@
 import {Router} from "express";
 import {
-	createOrg, deleteOrg, editOrg, getOrgById, getUserOrg, getOrgMembers, inviteUserToOrg, acceptInvite, exitOrg, modifyUserOrgRole, removeUserFromOrg
+	createOrg,
+	deleteOrg,
+	editOrg,
+	getOrgById,
+	getUserOrg,
+	getOrgMembers,
+	inviteUserToOrg,
+	acceptInvite,
+	exitOrg,
+	modifyUserOrgRole,
+	removeUserFromOrg,
+	getOrgMonitors
 } from "./controller"
 
 import {verifyExpress} from "../../middleware/auth";
@@ -17,5 +28,6 @@ router.delete("/user/:orgId", verifyExpress, removeUserFromOrg)
 router.delete("/exit/:orgId", verifyExpress, exitOrg)
 router.get("/members/:orgId", verifyExpress, getOrgMembers)
 router.put("/role/:orgId", verifyExpress, modifyUserOrgRole)
+router.get("/monitors/:orgId", verifyExpress, getOrgMonitors)
 
 export default router;

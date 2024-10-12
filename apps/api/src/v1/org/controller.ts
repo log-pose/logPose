@@ -13,7 +13,7 @@ export const createOrg: RequestHandler = asyncHandler(async (req: IRequest, res:
 	const orgName = req.body.orgName
 	try {
 		const orgId = await service.createOrg(orgName, userId)
-		res.status(201).json(new ApiResponse(201, {orgId, orgName, orgPlan: "free"}, "successfullly created the organization"))
+		res.status(201).json(new ApiResponse(201, {orgId, orgName, orgPlan: "free"}, "successfully created the organization"))
 	}
 	catch (e) {
 		throw new ApiError(400, "Name already taken")
@@ -152,7 +152,6 @@ export const exitOrg: RequestHandler = asyncHandler(async (req: IRequest, res: R
 	)
 })
 
-//TODO if not a valid uuid request will fail
 export const getOrgMembers: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
 	const {orgId} = req.params
 	const {limit, page} = req.query
@@ -180,9 +179,19 @@ export const modifyUserOrgRole: RequestHandler = asyncHandler(async (req: IReque
 	if (!isUserValid) {
 		throw new ApiError(403, "You cannot perform this operation")
 	}
-	console.log(isUserValid)
 	await service.updateUserOrgRole(updateUser, orgId, toRole)
 	res.status(200).json(
 		new ApiResponse(200, null, "Org org role updated successfully")
+	)
+})
+
+export const getOrgMonitors : RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
+	const {id} = req.params
+	const monitors = await service.getMonitors(id)
+	if (monitors.length === 0) {
+		throw new ApiError(404, "No monitors found.")
+	}
+	res.status(200).json(
+		new ApiResponse(200, monitors, "Monitors found")
 	)
 })
