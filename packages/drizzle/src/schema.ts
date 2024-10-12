@@ -1,5 +1,4 @@
 import {sql} from "drizzle-orm";
-import {json} from "drizzle-orm/pg-core";
 import {
 	pgTable,
 	timestamp,
@@ -55,5 +54,25 @@ export const user = pgTable("user", {
 	email: varchar("email").unique().notNull(),
 	created_at: timestamp("created_at").default(sql`now()`),
 });
+export const heartbeatEnum = pgEnum('heartbeat_enum', ["1","15","30","45","60","120","180","720","1440"])
+export const monitorKindEnum = pgEnum('monitor_kind', ["http"])
+
+export const monitors = pgTable("monitors", {
+	id: uuid("id").default(sql`gen_random_uuid()`).primaryKey(),
+	name : varchar("name"),
+	kind: monitorKindEnum("kind"),
+	orgId: uuid("org_id").references(() => org.id),
+	heartbeatInterval: heartbeatEnum("heartbeat_interval"),
+	retries : integer("retries"),
+	url : varchar("url"),
+	active: boolean("active"),
+}, (t)=>({
+		unique_name_kind_org : unique().on(
+			t.name,
+			t.kind,
+			t.orgId
+		)
+	})
+	)
 
 
