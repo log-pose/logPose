@@ -1,7 +1,7 @@
 import logRequest from '../middleware/logRequest';
 import errorHandler from '../middleware/errorHandler';
 import * as  bodyParser from 'body-parser';
-import * as cors from 'cors';
+import  cors from 'cors';
 import * as express from 'express';
 import helmet from 'helmet';
 import routes from '../routes/routes'

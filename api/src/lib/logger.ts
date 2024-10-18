@@ -1,5 +1,6 @@
 import {createLogger, format, transports, Logger} from "winston";
-import config from "../config/env";
+import config from "../config/env"
+
 const {combine, timestamp, label, printf, json} = format;
 
 const myFormat = printf(({level, message, label, timestamp}) => {
@@ -48,7 +49,7 @@ const prodLogger = (serviceName: string, logDir: string): Logger => {
     });
 };
 
-const serviceName = config.service;
+const serviceName = "log-pose"
 const logsDir = `${config.rootDir}/logs`;
 
 let logger = devLogger(serviceName);
