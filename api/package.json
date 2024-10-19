@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "generate": "drizzle-kit generate",
+    "generate": "drizzle-kit  generate",
     "push": "drizzle-kit push",
     "build": "npx tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon --env-file=/Users/sebin/Developer/log-pose/.env src/index.ts",
-    "dev3": "nodemon --exec node -r ts-node/register --env-file=/Users/sebin/Developer/log-pose/.env src/index.ts"
+    "dev": "nodemon --exec node -r ts-node/register --env-file=../.env src/index.ts"
   },
   "author": "",
   "license": "ISC",
