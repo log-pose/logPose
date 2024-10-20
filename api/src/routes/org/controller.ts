@@ -93,17 +93,19 @@ export const inviteUserToOrg: RequestHandler = asyncHandler(async (req: IRequest
     if (ifAlreadyMember) {
         throw new ApiError(400, "User is already a member")
     }
-    const userOrg = await service.getOrgById(orgId, userId)
-    const userDetails = await service.getUserById(userId)
     const token = await service.saveInviteToken(invitedUserRole, userToInvite, userId, orgId)
-    const {
-        data: _,
-        error
-    } = await service.sendInviteMail(userToInvite, userOrg.name as string, userDetails.username as string, token)
-    if (error) {
-        throw new ApiError(500, "Something went wrong")
-    }
-    res.status(200).json(new ApiResponse(200, "User invited to org", null))
+    // TODO: for sending mail
+    //const userOrg = await service.getOrgById(orgId, userId)
+    //const userDetails = await service.getUserById(userId)
+
+    //const {
+    //    data: _,
+    //    error
+    //} = await service.sendInviteMail(userToInvite, userOrg.name as string, userDetails.username as string, token)
+    //if (error) {
+    //    throw new ApiError(500, "Something went wrong")
+    //}
+    res.status(200).json(new ApiResponse(200, "User invited to org", {token}))
 })
 
 export const acceptInvite: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
@@ -114,8 +116,8 @@ export const acceptInvite: RequestHandler = asyncHandler(async (req: IRequest, r
         throw new ApiError(400, "Invite Expired!")
     }
     const userInfo = await service.getUserById(userId)
-    if (userInfo.email !== tokenInfo.invitee) {
-        throw new ApiError(403, "Forbidden")
+    if (userInfo.id !== tokenInfo.invitee) {
+        throw new ApiError(403, "You cannot join")
     }
     const ifAlreadyMember = await service.checkIfUserAlreadyMember(tokenInfo.invitee, tokenInfo.orgId)
     if (ifAlreadyMember) {
