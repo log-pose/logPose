@@ -8,4 +8,3 @@ router.use("/auth", authRoutes);
 router.use("/org", orgRoutes)
 
 export default router;
-

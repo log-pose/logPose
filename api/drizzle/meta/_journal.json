@@ -15,6 +15,13 @@
       "when": 1729357825645,
       "tag": "0001_robust_the_stranger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1729440189173,
+      "tag": "0002_spotty_black_bird",
+      "breakpoints": true
     }
   ]
 }
