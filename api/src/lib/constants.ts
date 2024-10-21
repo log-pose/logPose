@@ -29,3 +29,9 @@ export const pingInterval = [
 
 export const DEFAULT_PLAN = "free"
 export const DEFAULT_ROLE = "admin"
+
+export enum roleEnum {
+    "admin" = 1,
+    "read",
+    "write"
+}

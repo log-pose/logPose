@@ -1,9 +1,9 @@
-import {boolean, integer, pgEnum, pgTable, serial, timestamp, uuid, varchar, unique, json} from "drizzle-orm/pg-core";
-import {sql} from "drizzle-orm";
+import { boolean, integer, pgEnum, pgTable, serial, timestamp, uuid, varchar, unique, json } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import * as c from "../lib/constants"
 
 // Enums
-export const orgRoleEnum = pgEnum('org_roles', c.orgRoles )
+export const orgRoleEnum = pgEnum('org_roles', c.orgRoles)
 export const orgPlanEnum = pgEnum("user_plan", c.userPlans)
 export const monitorTypes = pgEnum("monitor_types", c.monitorTypes)
 export const pingIntervalEnum = pgEnum("ping_interval", c.pingInterval)
@@ -50,7 +50,8 @@ export const orgInvite = pgTable("org_invite", {
 export const monitors = pgTable("monitors", {
 	orgId: uuid("org_id").references(() => user.id),
 	name: varchar("name").notNull(),
-	monitorType : monitorTypes("monitor_types").notNull(),
-	ping : pingIntervalEnum("ping_interval").default(c.pingEnum.FIFTEEN_MIN).notNull(), // choosing fifteen minute as default as not to overload
-	additionalInfo : json("additional_info"),
+	monitorType: monitorTypes("monitor_types").notNull(),
+	ping: pingIntervalEnum("ping_interval").default(c.pingEnum.FIFTEEN_MIN).notNull(), // choosing fifteen minute as default as not to overload
+	isActive: boolean("is_active").default(true),
+	additionalInfo: json("additional_info"),
 })
