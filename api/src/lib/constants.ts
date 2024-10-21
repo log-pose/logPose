@@ -26,3 +26,6 @@ export const pingInterval = [
     pingEnum.TWELVE_HR,
     pingEnum.ONE_DAY,
 ] as const
+
+export const DEFAULT_PLAN = "free"
+export const DEFAULT_ROLE = "admin"

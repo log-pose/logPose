@@ -4,19 +4,19 @@ import {org, orgInvite, user, userOrg} from "../../config/schema";
 import {and, eq} from "drizzle-orm";
 import {TOrgRoles} from "../../types/org";
 import {sendEmail} from "../../lib/mail";
-
+import * as c from "../../lib/constants"
 
 export const createOrg = async (orgName: string, userId: string) => {
 	return await db.transaction(async (trx) => {
 		const orgIdRow = await trx.insert(org).values([{
 			name: orgName,
 			created_by: userId,
-			plan: "free",
+			plan: c.DEFAULT_PLAN,
 		}]).returning({id: org.id})
 		await trx.insert(userOrg).values([{
 			userId,
 			orgId: orgIdRow[0].id,
-			role: 'admin'
+			role: c.DEFAULT_ROLE
 		}])
 		return orgIdRow[0].id
 	})
@@ -58,24 +58,6 @@ export const getUserOrgById = async (userId: string, limit: number, page: number
 		isNext: false,
 		isPrev: page > 1
 	}
-}
-
-export const checkIfValidUser = async (userId: string, orgId: string, orgRole: TOrgRoles) => {
-	const rows = await db.select().from(userOrg).where(and(
-		eq(
-			userOrg.orgId, orgId
-		),
-		eq(
-			userOrg.userId, userId
-		),
-		eq(
-			userOrg.role, orgRole
-		)
-	)).limit(1)
-	if (rows.length < 1) {
-		return false
-	}
-	return true
 }
 
 export const updateOrg = async (orgId: string, name: string) => {
