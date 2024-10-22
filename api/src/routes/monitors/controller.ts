@@ -6,11 +6,7 @@ import { IRequest } from "../../types/request";
 import * as u from "../../lib/utils"
 import * as s from "./services"
 import * as c from "../../lib/constants"
-//name: varchar("name").notNull(),
-//	monitorType: monitorTypes("monitor_types").notNull(),
-//	ping: pingIntervalEnum("ping_interval").default(c.pingEnum.FIFTEEN_MIN).notNull(), // choosing fifteen minute as default as not to overload
-//	isActive: boolean("is_active").default(true),
-//	additionalInfo: json("additional_info"),
+
 export const createMonitors: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
     let { monitorType, orgId, name, ping, additionalInfo = {} } = req.body
     const user = req.user
