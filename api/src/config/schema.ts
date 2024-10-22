@@ -5,7 +5,7 @@ import * as c from "../lib/constants"
 // Enums
 export const orgRoleEnum = pgEnum('org_roles', c.orgRoles)
 export const orgPlanEnum = pgEnum("user_plan", c.userPlans)
-export const monitorTypes = pgEnum("monitor_types", c.monitorTypes)
+export const monitorTypesEnum = pgEnum("monitor_types", c.monitorTypes)
 export const pingIntervalEnum = pgEnum("ping_interval", c.pingInterval)
 
 // Tables
@@ -48,9 +48,12 @@ export const orgInvite = pgTable("org_invite", {
 	orgId: uuid("org_id").references(() => org.id).notNull()
 })
 export const monitors = pgTable("monitors", {
+	id: uuid("id")
+		.default(sql`gen_random_uuid()`)
+		.primaryKey(),
 	orgId: uuid("org_id").references(() => user.id),
 	name: varchar("name").notNull(),
-	monitorType: monitorTypes("monitor_types").notNull(),
+	monitorType: monitorTypesEnum("monitor_types").notNull(),
 	ping: pingIntervalEnum("ping_interval").default(c.pingEnum.FIFTEEN_MIN).notNull(), // choosing fifteen minute as default as not to overload
 	isActive: boolean("is_active").default(true),
 	additionalInfo: json("additional_info"),
