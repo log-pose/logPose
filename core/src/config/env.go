@@ -20,9 +20,7 @@ type Config struct {
 func loadEnv() {
 	projectName := regexp.MustCompile(`^(.*` + ProjectDirName + `)`)
 	currentWorkDirectory, _ := os.Getwd()
-
 	rootPath := projectName.Find([]byte(currentWorkDirectory))
-	fmt.Println(string(rootPath) + `/.env`)
 	err := godotenv.Load(string(rootPath) + `/.env`)
 
 	if err != nil {
@@ -37,8 +35,7 @@ func GetConfigVars() Config {
 	dbUsername := os.Getenv("PSQL_USER")
 	dbPassword := os.Getenv("PSQL_PASSWORD")
 
-	url := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", dbUsername, dbPassword, dbHost, dbPort, dbName)
-	fmt.Println(url)
+	url := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", dbUsername, dbPassword, dbHost, dbPort, dbName)
 	return Config{
 		DB: DBConfig{
 			URL: url,
