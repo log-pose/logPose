@@ -18,6 +18,8 @@ func StartLogPose() {
 
 	// Server loop (infinite loop)
 	log.Println("Starting server...")
+
+	ticker10Sec := time.NewTicker(10 * time.Second)
 	done := make(chan bool)
 	go func() {
 		for {
@@ -29,8 +31,11 @@ func StartLogPose() {
 				} else {
 					log.Println("Database connection closed.")
 				}
+				ticker10Sec.Stop()
 				done <- true
 				return
+			case <-ticker10Sec.C:
+				runTask10Sec()
 			default:
 				time.Sleep(1 * time.Second)
 			}
@@ -38,4 +43,8 @@ func StartLogPose() {
 	}()
 	<-done
 	log.Println("Server shut down gracefully")
+}
+
+func runTask10Sec() {
+	log.Println("Running 10-second task...")
 }
