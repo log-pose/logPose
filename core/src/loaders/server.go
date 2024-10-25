@@ -6,6 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	tickers "github.com/sebzz2k2/log-pose/core/src/services"
 )
 
 func StartLogPose() {
@@ -15,36 +17,37 @@ func StartLogPose() {
 	}
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
-
-	// Server loop (infinite loop)
 	log.Println("Starting server...")
-
-	ticker10Sec := time.NewTicker(10 * time.Second)
-	done := make(chan bool)
-	go func() {
-		for {
-			select {
-			case <-quit:
-				log.Println("Shutdown signal received. Exiting gracefully...")
-				if err := db.Close(); err != nil {
-					log.Println("Error closing database:", err)
-				} else {
-					log.Println("Database connection closed.")
-				}
-				ticker10Sec.Stop()
-				done <- true
-				return
-			case <-ticker10Sec.C:
-				runTask10Sec()
-			default:
-				time.Sleep(1 * time.Second)
-			}
+	tickers := tickers.GetAllTickers()
+	defer func() {
+		for _, ticker := range tickers {
+			ticker.Stop()
 		}
 	}()
-	<-done
-	log.Println("Server shut down gracefully")
-}
 
-func runTask10Sec() {
-	log.Println("Running 10-second task...")
+	// Start a goroutine for each ticker
+	for i, ticker := range tickers {
+		go func(i int, ticker *time.Ticker) {
+			for tick := range ticker.C {
+				log.Printf("Ticker %d triggered at %v", i, tick)
+				// Place task logic for each interval here
+			}
+		}(i, ticker)
+	}
+	go func() {
+		<-quit
+		log.Println("Shutdown signal received. Exiting gracefully...")
+		if err := db.Close(); err != nil {
+			log.Println("Error closing database:", err)
+		} else {
+			log.Println("Database connection closed.")
+		}
+		for _, ticker := range tickers {
+			ticker.Stop()
+		}
+		log.Println("Server shut down gracefully")
+		os.Exit(0)
+	}()
+
+	select {} // Keep main function alive
 }
