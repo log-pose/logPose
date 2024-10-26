@@ -51,7 +51,7 @@ export const monitors = pgTable("monitors", {
 	id: uuid("id")
 		.default(sql`gen_random_uuid()`)
 		.primaryKey(),
-	orgId: uuid("org_id").references(() => user.id),
+	orgId: uuid("org_id").references(() => org.id),
 	name: varchar("name").notNull(),
 	monitorType: monitorTypesEnum("monitor_types").notNull(),
 	ping: pingIntervalEnum("ping_interval").default(c.pingEnum.FIFTEEN_MIN).notNull(), // choosing fifteen minute as default as not to overload

@@ -6,6 +6,7 @@ import { IRequest } from "../../types/request";
 import * as u from "../../lib/utils"
 import * as s from "./services"
 import * as c from "../../lib/constants"
+import logger from "../../lib/logger";
 
 export const createMonitors: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
     let { monitorType, orgId, name, ping, additionalInfo = {} } = req.body
@@ -27,10 +28,15 @@ export const createMonitors: RequestHandler = asyncHandler(async (req: IRequest,
     if (!isUserValid) {
         throw new ApiError(403, "You cannot perform this operation")
     }
-    const monitorId = s.createMonitor(name, additionalInfo, ping, orgId, monitorType)
-    res.status(201).json(
-        new ApiResponse(201, "new monitor created", monitorId)
-    )
+    try {
+        const monitorId = await s.createMonitor(name, additionalInfo, ping, orgId, monitorType)
+        res.status(201).json(
+            new ApiResponse(201, "new monitor created", monitorId)
+        )
+    } catch (e) {
+        logger.error(e)
+        throw new ApiError(500, "Something Went wrong")
+    }
 })
 
 export const updateMonitor: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
