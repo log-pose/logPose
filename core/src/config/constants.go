@@ -3,7 +3,7 @@ package config
 const ProjectDirName = "log-pose"
 
 const (
-	ONE_SEC     = 1
+	TEN_SEC     = 10
 	ONE_MIN     = 60
 	TEN_MIN     = 600
 	FIFTEEN_MIN = 900

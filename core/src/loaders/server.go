@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"time"
 
-	tickers "github.com/sebzz2k2/log-pose/core/src/services"
+	"github.com/sebzz2k2/log-pose/core/src/services"
 )
 
 func StartLogPose() {
@@ -18,7 +18,7 @@ func StartLogPose() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	log.Println("Starting server...")
-	tickers := tickers.GetAllTickers()
+	tickers := services.GetAllTickers()
 	defer func() {
 		for _, ticker := range tickers {
 			ticker.Stop()
@@ -28,9 +28,9 @@ func StartLogPose() {
 	// Start a goroutine for each ticker
 	for i, ticker := range tickers {
 		go func(i int, ticker *time.Ticker) {
-			for tick := range ticker.C {
-				log.Printf("Ticker %d triggered at %v", i, tick)
+			for range ticker.C {
 				// Place task logic for each interval here
+				services.GetMonitors(60, db)
 			}
 		}(i, ticker)
 	}
