@@ -1,0 +1,1 @@
+ALTER TABLE "monitors" ADD CONSTRAINT "monitors_org_id_name_unique" UNIQUE("org_id","name");
