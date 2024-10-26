@@ -57,6 +57,7 @@ export const monitors = pgTable("monitors", {
 	ping: pingIntervalEnum("ping_interval").default(c.pingEnum.FIFTEEN_MIN).notNull(), // choosing fifteen minute as default as not to overload
 	isActive: boolean("is_active").default(true),
 	additionalInfo: json("additional_info"),
+	retries : integer("retries").default(3)
 }, (t)=> ({
 	unique_org_monitor : unique().on(
 		t.orgId,
