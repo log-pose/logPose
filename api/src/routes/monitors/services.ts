@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm"
 import { monitors, org } from "../../config/schema"
 import { db } from "../../loaders/psql"
 import { TMonitorType, TPingInterval } from "../../types/monitor"
+import * as v from "../../lib/validators"
 
 export const deleteMonitor = async (id: string) => {
     await db.delete(monitors)
@@ -41,4 +42,17 @@ export const createMonitor = async (name: string, additionalInfo: any, pingInter
             id: monitors.id
         })
     return monitor
+}
+
+export const validateMonitorType = (type: string, obj: any): { success: boolean, err: string | null } => {
+    switch (type) {
+        case "http": {
+            return v.validateHttp(obj)
+        }
+        default:
+            return {
+                success: false,
+                err: "No such monitor type"
+            }
+    }
 }

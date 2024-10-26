@@ -20,6 +20,11 @@ export const createMonitors: RequestHandler = asyncHandler(async (req: IRequest,
     if (!c.monitorTypes.includes(monitorType)) {
         throw new ApiError(400, "Not a valid monitor type")
     }
+    const validMonitor = s.validateMonitorType(monitorType, additionalInfo)
+    if (!validMonitor.success) {
+        const str = `${validMonitor.err} as additional info for ${monitorType}`
+        throw new ApiError(400, str)
+    }
     if (!name) {
         name = u.generateNames()
     }
