@@ -1,4 +1,4 @@
-package config
+package pkg
 
 const ProjectDirName = "log-pose"
 
@@ -14,3 +14,16 @@ const (
 	TWELVE_HR   = 43200
 	ONE_DAY     = 86400
 )
+
+var Intervals = []int{
+	TEN_SEC,
+	ONE_MIN,
+	TEN_MIN,
+	FIFTEEN_MIN,
+	THIRTY_MIN,
+	ONE_HR,
+	THREE_HR,
+	SIX_HR,
+	TWELVE_HR,
+	ONE_DAY,
+}
