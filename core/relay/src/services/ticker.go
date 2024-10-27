@@ -3,7 +3,7 @@ package services
 import (
 	"time"
 
-	"github.com/sebzz2k2/log-pose/core/src/config"
+	"github.com/sebzz2k2/log-pose/relay/src/config"
 )
 
 var Intervals = []int{

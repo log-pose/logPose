@@ -1,4 +1,4 @@
-module github.com/sebzz2k2/log-pose/core
+module github.com/sebzz2k2/log-pose/relay
 
 go 1.22.5
 

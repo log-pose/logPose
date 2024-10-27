@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/sebzz2k2/log-pose/core/src/services"
+	"github.com/sebzz2k2/log-pose/relay/src/services"
 )
 
 func StartLogPose() {
