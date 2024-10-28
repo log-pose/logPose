@@ -16,7 +16,7 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
-  rabbitmq:
+  rmq:
     image: rabbitmq:3-management-alpine
     container_name: 'rabbitmq'
     ports:
