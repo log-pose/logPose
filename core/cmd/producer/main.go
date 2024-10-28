@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -15,43 +14,62 @@ import (
 	"github.com/sebzz2k2/log-pose/core/pkg"
 )
 
-func getMonitors(pingInterval int, db *sql.DB) {
+type Monitor struct {
+	OrgID          string                 `json:"org_id"`
+	Name           string                 `json:"name"`
+	MonitorTypes   string                 `json:"monitor_types"`
+	PingInterval   int                    `json:"ping_interval"`
+	AdditionalInfo map[string]interface{} `json:"additional_info"`
+	IsActive       bool                   `json:"is_active"`
+	ID             string                 `json:"id"`
+	Retries        int                    `json:"retries"`
+}
+
+func getMonitors(pingInterval int, db *sql.DB) ([]Monitor, error) {
 	rows, err := db.Query(`
-		SELECT * from monitors
+		SELECT org_id, name, monitor_types, ping_interval, additional_info, is_active, id, retries
+		FROM monitors
 		WHERE ping_interval = $1
 	`, pingInterval)
 
 	if err != nil {
-		log.Println(err)
-		log.Fatalf("Error while fetching monitors for pingInterval %d", pingInterval)
+		log.Printf("Error fetching monitors for pingInterval %d: %v", pingInterval, err)
+		return nil, err
 	}
 	defer rows.Close()
 
-	// Loop through each row
-	for rows.Next() {
-		var orgID, name, monitorTypes, id string
-		var pingInterval, retries int
-		var additionalInfo json.RawMessage
-		var isActive bool
+	var monitors []Monitor
 
-		err = rows.Scan(&orgID, &name, &monitorTypes, &pingInterval, &additionalInfo, &isActive, &id, &retries)
+	for rows.Next() {
+		var (
+			monitor       Monitor
+			additionalRaw json.RawMessage
+		)
+		err := rows.Scan(
+			&monitor.OrgID,
+			&monitor.Name,
+			&monitor.MonitorTypes,
+			&monitor.PingInterval,
+			&additionalRaw,
+			&monitor.IsActive,
+			&monitor.ID,
+			&monitor.Retries,
+		)
 		if err != nil {
-			log.Println("Error scanning row:", err)
+			log.Printf("Error scanning row: %v", err)
 			continue
 		}
-
-		var additionalData map[string]interface{}
-		if err := json.Unmarshal(additionalInfo, &additionalData); err != nil {
-			log.Println("Error decoding additional_info:", err)
+		if err := json.Unmarshal(additionalRaw, &monitor.AdditionalInfo); err != nil {
+			log.Printf("Error decoding additional_info for monitor %s: %v", monitor.ID, err)
+			continue
 		}
-
-		fmt.Printf("org_id: %s, name: %s, monitor_types: %s, ping_interval: %d, additional_info: %v, is_active: %t, id: %s\n",
-			orgID, name, monitorTypes, pingInterval, additionalData, isActive, id)
+		monitors = append(monitors, monitor)
 	}
-
 	if err = rows.Err(); err != nil {
-		log.Println("Error with rows:", err)
+		log.Printf("Error with rows: %v", err)
+		return nil, err
 	}
+	return monitors, nil
 }
 
 func getAllTickers() []*time.Ticker {
@@ -81,8 +99,13 @@ func main() {
 	for i, ticker := range tickers {
 		go func(i int, ticker *time.Ticker) {
 			for range ticker.C {
-				// Place task logic for each interval here
-				getMonitors(60, db)
+				monitors, err := getMonitors(60, db)
+				if err != nil {
+					log.Fatalf("Failed to retrieve monitors: %v", err)
+				}
+				for _, monitor := range monitors {
+					log.Println(monitor)
+				}
 			}
 		}(i, ticker)
 	}
