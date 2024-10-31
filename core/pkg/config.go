@@ -9,12 +9,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type DBConfig struct {
+type URLConfig struct {
 	URL string
 }
 
 type Config struct {
-	DB DBConfig
+	DB  URLConfig
+	RMQ URLConfig
 }
 
 func loadEnv() {
@@ -35,10 +36,19 @@ func GetConfigVars() Config {
 	dbUsername := os.Getenv("PSQL_USER")
 	dbPassword := os.Getenv("PSQL_PASSWORD")
 
-	url := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", dbUsername, dbPassword, dbHost, dbPort, dbName)
+	rmqUser := os.Getenv("RMQ_USER")
+	rmqPass := os.Getenv("RMQ_PASSWORD")
+	rmqPort := os.Getenv("RMQ_PORT")
+	rmqHost := os.Getenv("RMQ_HOST")
+
+	dbURL := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", dbUsername, dbPassword, dbHost, dbPort, dbName)
+	rmqURL := fmt.Sprintf("amqp://%s:%s@%s:%s/", rmqUser, rmqPass, rmqHost, rmqPort)
 	return Config{
-		DB: DBConfig{
-			URL: url,
+		DB: URLConfig{
+			URL: dbURL,
+		},
+		RMQ: URLConfig{
+			URL: rmqURL,
 		},
 	}
 }

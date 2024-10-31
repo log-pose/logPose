@@ -82,12 +82,17 @@ func getAllTickers() []*time.Ticker {
 
 func main() {
 	db := pkg.GetDB()
+	rmq := pkg.GetRmq()
 	if err := db.Ping(); err == nil {
 		log.Println("Connected to database")
 	}
+	if rmq != nil {
+
+		log.Println("Connected to queue")
+	}
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
-	log.Println("Starting server...")
+	log.Println("Starting server")
 	tickers := getAllTickers()
 	defer func() {
 		for _, ticker := range tickers {
