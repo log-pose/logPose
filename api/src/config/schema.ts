@@ -1,4 +1,4 @@
-import { boolean, integer, pgEnum, pgTable, serial, timestamp, uuid, varchar, unique, json } from "drizzle-orm/pg-core";
+import { boolean, integer, pgEnum, pgTable, timestamp, uuid, varchar, unique, json, bigint } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import * as c from "../lib/constants"
 
@@ -57,10 +57,24 @@ export const monitors = pgTable("monitors", {
 	ping: pingIntervalEnum("ping_interval").default(c.pingEnum.FIFTEEN_MIN).notNull(), // choosing fifteen minute as default as not to overload
 	isActive: boolean("is_active").default(true),
 	additionalInfo: json("additional_info"),
-	retries : integer("retries").default(3)
-}, (t)=> ({
-	unique_org_monitor : unique().on(
+	retries: integer("retries").default(3)
+}, (t) => ({
+	unique_org_monitor: unique().on(
 		t.orgId,
 		t.name
 	)
 }))
+
+export const monitorStatus = pgTable("monitor_status", {
+	startTs: bigint("start_ts", { mode: "bigint" }),
+	endTs: bigint("end_ts", { mode: "bigint" }),
+	monitorId: uuid("monitor_id").references(() => monitors.id),
+	statusCode: varchar("status_code"),
+	success: boolean("success")
+})
+
+export const monitorFailed = pgTable("monitor_failed", {
+	monitorId: uuid("monitor_id").references(() => monitors.id),
+	failCount: integer("fail_count"),
+	alertSentTs: bigint("alert_sent_ts", { mode: "bigint" })
+})

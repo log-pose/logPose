@@ -57,6 +57,13 @@
       "when": 1729972522493,
       "tag": "0007_wooden_maelstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1730562747502,
+      "tag": "0008_glossy_monster_badoon",
+      "breakpoints": true
     }
   ]
 }
