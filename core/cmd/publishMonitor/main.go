@@ -101,6 +101,7 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	log.Println("Starting server")
+
 	tickers := getAllTickers()
 	defer func() {
 		for _, ticker := range tickers {
@@ -124,6 +125,8 @@ func main() {
 					err = queue.Publish("", pkg.PUB_MONITOR_Q, false, false, mon)
 					if err != nil {
 						log.Fatalf("Failed to publish message: %v", err)
+					} else {
+						log.Printf("Published monitor %s to queue: %s", monitor.ID, pkg.PUB_MONITOR_Q)
 					}
 				}
 			}
