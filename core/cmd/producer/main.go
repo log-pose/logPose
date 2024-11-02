@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -121,7 +120,6 @@ func main() {
 					if err != nil {
 						log.Fatalf("Error converting Monitor to JSON: %v", err)
 					}
-					fmt.Println("SENDINF")
 					err = queue.Publish("", pkg.PUB_MONITOR_Q, false, false, mon)
 					if err != nil {
 						log.Fatalf("Failed to publish message: %v", err)
