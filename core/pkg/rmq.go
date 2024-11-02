@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"log"
 	"sync"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -76,7 +75,6 @@ func (r *RMQ) GetQueue(queueName string) (*Queue, error) {
 }
 
 func (q *Queue) Publish(exchange, routingKey string, mandatory, immediate bool, body []byte) error {
-	log.Println(body)
 	err := q.channel.PublishWithContext(
 		nil,        // context (nil means no timeout)
 		exchange,   // exchange
