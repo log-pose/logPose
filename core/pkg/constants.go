@@ -27,3 +27,5 @@ var Intervals = []int{
 	TWELVE_HR,
 	ONE_DAY,
 }
+
+const PUB_MONITOR_Q = "publish_monitors"

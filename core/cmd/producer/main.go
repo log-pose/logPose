@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -82,13 +83,20 @@ func getAllTickers() []*time.Ticker {
 
 func main() {
 	db := pkg.GetDB()
-	rmq := pkg.GetRmq()
 	if err := db.Ping(); err == nil {
 		log.Println("Connected to database")
 	}
-	if rmq != nil {
 
+	rmqInstance, err := pkg.GetRmq()
+	if err != nil {
+		log.Fatalf("Failed to connect to RabbitMQ: %v", err)
+	} else {
 		log.Println("Connected to queue")
+	}
+	defer rmqInstance.Close()
+	queue, err := rmqInstance.GetQueue(pkg.PUB_MONITOR_Q)
+	if err != nil {
+		log.Fatalf("Failed to declare queue: %v", err)
 	}
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
@@ -109,7 +117,15 @@ func main() {
 					log.Fatalf("Failed to retrieve monitors: %v", err)
 				}
 				for _, monitor := range monitors {
-					log.Println(monitor)
+					mon, err := json.Marshal(monitor)
+					if err != nil {
+						log.Fatalf("Error converting Monitor to JSON: %v", err)
+					}
+					fmt.Println("SENDINF")
+					err = queue.Publish("", pkg.PUB_MONITOR_Q, false, false, mon)
+					if err != nil {
+						log.Fatalf("Failed to publish message: %v", err)
+					}
 				}
 			}
 		}(i, ticker)
