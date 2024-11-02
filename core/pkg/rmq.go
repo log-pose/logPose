@@ -89,6 +89,22 @@ func (q *Queue) Publish(exchange, routingKey string, mandatory, immediate bool, 
 	return err
 }
 
+func (q *Queue) Consume() (<-chan amqp.Delivery, error) {
+	msgs, err := q.channel.Consume(
+		q.name, // queue
+		"",     // consumer
+		true,   // auto-ack
+		false,  // exclusive
+		false,  // no-local
+		false,  // no-wait
+		nil,    // args
+	)
+	if err != nil {
+		return nil, err
+	}
+	return msgs, nil
+}
+
 func (r *RMQ) Close() {
 	if r.channel != nil {
 		r.channel.Close()
