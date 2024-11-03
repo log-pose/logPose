@@ -2,6 +2,7 @@ import * as z from "zod"
 
 const httpSchema = z.object({
     url: z.string().url(),
+    method: z.enum(["GET", "PUT", "POST", "PATCH", "DELETE"]),
     headers: z.record(z.string()).optional(),
     body: z.record(z.any()).optional(),
 });
