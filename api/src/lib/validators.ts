@@ -16,15 +16,18 @@ export const validateHttp = (obj: any): { success: boolean, err: string | null }
         }
     }
     const formatted = parsed.error.format()
-    const formattedStr = Object.entries(formatted).map(([k, v]) => {
-        if (k !== "_errors") {
-            if ("_errors" in v) {
-                return `${k} ${v._errors.join(", ").toLowerCase()}`
-            }
-        }
-    }).filter(el => el != null).join(" and ")
-    return {
+    const formattedStr = formatZodError(parsed.error.format());return {
         success: false,
         err: formattedStr
     }
 }
+
+// helper
+const formatZodError = (error: z.ZodFormattedError<any>): string => {
+    return Object.entries(error).map(([key, value]) => {
+        if (key !== "_errors" && typeof value === "object" && value !== null && "_errors" in value) {
+            const errors = (value._errors as unknown) as string[];
+            return `${key} ${errors.join(", ").toLowerCase()}`;
+        }
+    }).filter(Boolean).join(" and ");
+};
