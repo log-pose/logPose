@@ -3,7 +3,7 @@ package pollers
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -30,7 +30,7 @@ func HTTPRequest(url, method string, body []byte, headers map[string]string) ([]
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, resp.StatusCode, errors.New("request failed with status: " + resp.Status)
 	}
-	responseBody, err := ioutil.ReadAll(resp.Body)
+	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, resp.StatusCode, err
 	}
