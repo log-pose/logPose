@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -9,7 +10,15 @@ import (
 
 	_ "github.com/lib/pq"
 	"github.com/sebzz2k2/log-pose/core/pkg"
+	"github.com/sebzz2k2/log-pose/core/pkg/pollers"
 )
+
+type AdditionalInfo struct {
+	Method  string                 `json:"method"`
+	URL     string                 `json:"url"`
+	Body    map[string]interface{} `json:"body,omitempty"`
+	Headers map[string]string      `json:"headers,omitempty"`
+}
 
 func main() {
 	db := pkg.GetDB()
@@ -25,7 +34,6 @@ func main() {
 	}
 	defer rmqInstance.Close()
 	queue, err := rmqInstance.GetQueue(pkg.PUB_MONITOR_Q)
-	fmt.Println(queue)
 	if err != nil {
 		log.Fatalf("Failed to declare queue: %v", err)
 	}
@@ -40,7 +48,27 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			fmt.Printf("Received message: %s\n", d.Body)
+			msgBody := d.Body
+			var message struct {
+				AdditionalInfo AdditionalInfo `json:"additional_info"`
+			}
+
+			err := json.Unmarshal(msgBody, &message)
+			if err != nil {
+				log.Printf("Failed to unmarshal message: %v", err)
+				return
+			}
+
+			url := message.AdditionalInfo.URL
+			method := message.AdditionalInfo.Method
+			headers := message.AdditionalInfo.Headers
+			body := message.AdditionalInfo.Body
+			response, statusCode, err := pollers.HTTPRequest(url, method, body, headers)
+			if err != nil {
+				log.Printf("HTTP request failed: %v", err)
+			}
+			fmt.Printf("Status Code: %d\nResponse: %s\n", statusCode, response)
+			// TODO save to db
 		}
 	}()
 	go func() {

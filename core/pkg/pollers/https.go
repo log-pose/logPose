@@ -2,21 +2,25 @@ package pollers
 
 import (
 	"bytes"
-	"errors"
+	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 )
 
-func HTTPRequest(url, method string, body []byte, headers map[string]string) ([]byte, int, error) {
-	var requestBody *bytes.Buffer
+func HTTPRequest(url, method string, body map[string]interface{}, headers map[string]string) ([]byte, int, error) {
+	var requestBody io.Reader
 	if body != nil {
-		requestBody = bytes.NewBuffer(body)
-	} else {
-		requestBody = nil
+		jsonBody, err := json.Marshal(body)
+		if err != nil {
+			return nil, 0, fmt.Errorf("failed to marshal body: %w", err)
+		}
+		requestBody = bytes.NewBuffer(jsonBody)
 	}
 	req, err := http.NewRequest(method, url, requestBody)
+
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("failed to create request: %w", err)
 	}
 	for key, value := range headers {
 		req.Header.Set(key, value)
@@ -24,15 +28,13 @@ func HTTPRequest(url, method string, body []byte, headers map[string]string) ([]
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, resp.StatusCode, errors.New("request failed with status: " + resp.Status)
-	}
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, resp.StatusCode, err
+		return nil, resp.StatusCode, fmt.Errorf("failed to read response body: %w", err)
 	}
+	responseBody = responseBody[:50]
 	return responseBody, resp.StatusCode, nil
 }
