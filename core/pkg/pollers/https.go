@@ -35,6 +35,6 @@ func HTTPRequest(url, method string, body map[string]interface{}, headers map[st
 	if err != nil {
 		return nil, resp.StatusCode, fmt.Errorf("failed to read response body: %w", err)
 	}
-	responseBody = responseBody[:50]
+	responseBody = responseBody[:100]
 	return responseBody, resp.StatusCode, nil
 }
