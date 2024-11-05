@@ -1,12 +1,15 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
+	"time"
 
 	_ "github.com/lib/pq"
 	"github.com/sebzz2k2/log-pose/core/pkg"
@@ -20,6 +23,17 @@ type AdditionalInfo struct {
 	Headers map[string]string      `json:"headers,omitempty"`
 }
 
+func insertMonitorStatus(db *sql.DB, startTs int64, endTs int64, monitorId string, statusCode string, success bool, resp []byte) error {
+	query := `
+        INSERT INTO monitor_status (start_ts, end_ts, monitor_id, status_code, success, resp)
+        VALUES ($1, $2, $3, $4, $5, $6)
+    `
+	_, err := db.Exec(query, startTs, endTs, monitorId, statusCode, success, resp)
+	if err != nil {
+		return fmt.Errorf("failed to insert monitor status: %w", err)
+	}
+	return nil
+}
 func main() {
 	db := pkg.GetDB()
 	if err := db.Ping(); err == nil {
@@ -50,6 +64,7 @@ func main() {
 		for d := range msgs {
 			msgBody := d.Body
 			var message struct {
+				Id             string         `json:"id"`
 				AdditionalInfo AdditionalInfo `json:"additional_info"`
 			}
 
@@ -63,12 +78,18 @@ func main() {
 			method := message.AdditionalInfo.Method
 			headers := message.AdditionalInfo.Headers
 			body := message.AdditionalInfo.Body
+			startTs := time.Now().Unix()
 			response, statusCode, err := pollers.HTTPRequest(url, method, body, headers)
+			endTs := time.Now().Unix()
 			if err != nil {
-				log.Printf("HTTP request failed: %v", err)
+				log.Printf("Polling monitorId %s failed", message.Id)
 			}
-			fmt.Printf("Status Code: %d\nResponse: %s\n", statusCode, response)
-			// TODO save to db
+			success := statusCode < 400
+			if err := insertMonitorStatus(db, startTs, endTs, message.Id, strconv.Itoa(statusCode), success, response); err != nil {
+				log.Fatalf("failed to insert monitor status: %v", err)
+			}
+			// TODO if falided get failcount and increment by 1
+			// TODO if increased fail conut >= retiries push to send notification queue
 		}
 	}()
 	go func() {
