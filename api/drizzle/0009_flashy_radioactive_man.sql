@@ -1,0 +1,1 @@
+ALTER TABLE "monitor_status" ADD COLUMN "resp" varchar;

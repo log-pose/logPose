@@ -70,7 +70,8 @@ export const monitorStatus = pgTable("monitor_status", {
 	endTs: bigint("end_ts", { mode: "bigint" }),
 	monitorId: uuid("monitor_id").references(() => monitors.id),
 	statusCode: varchar("status_code"),
-	success: boolean("success")
+	success: boolean("success"),
+	response : varchar("resp")
 })
 
 export const monitorFailed = pgTable("monitor_failed", {

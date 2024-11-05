@@ -64,6 +64,13 @@
       "when": 1730562747502,
       "tag": "0008_glossy_monster_badoon",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1730823409074,
+      "tag": "0009_flashy_radioactive_man",
+      "breakpoints": true
     }
   ]
 }
