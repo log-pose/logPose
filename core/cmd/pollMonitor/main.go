@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -25,7 +26,39 @@ type AdditionalInfo struct {
 
 var message struct {
 	Id             string         `json:"id"`
+	Retries        int            `json:"retries"`
 	AdditionalInfo AdditionalInfo `json:"additional_info"`
+}
+
+type FailedMonitor struct {
+	OrgID       string `json:"org_id"`
+	FailCount   int    `json:"fail_count"`
+	AlertSentTs int32  `json:"alert_sent_ts"`
+}
+
+func updateFailedMonitorCount(monitorId string, db *sql.DB) int {
+	ctx := context.Background()
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer tx.Rollback()
+	var failedMonitor FailedMonitor
+	if err = tx.QueryRowContext(ctx, "SELECT * from monitor_failed WHERE monitor_id = ? LIMIT 1", monitorId).Scan(
+		&failedMonitor.OrgID,
+		&failedMonitor.FailCount,
+		&failedMonitor.AlertSentTs,
+	); err != nil {
+		if err == sql.ErrNoRows {
+			log.Printf("Monitor wit id: %s does not exist", monitorId)
+		}
+	}
+	_, err = tx.ExecContext(ctx, "UPDATE monitor_failed SET fail_count = fail_count + ? WHERE id = ?",
+		1, monitorId)
+	if err != nil {
+		log.Printf("Update of monitor id: %s failed", monitorId)
+	}
+	return failedMonitor.FailCount
 }
 
 func insertMonitorStatus(db *sql.DB, startTs int64, endTs int64, monitorId string, statusCode string, success bool, resp []byte) error {
@@ -81,8 +114,11 @@ func main() {
 			if err := insertMonitorStatus(db, startTs, endTs, message.Id, strconv.Itoa(statusCode), success, response); err != nil {
 				log.Fatalf("failed to insert monitor status: %v", err)
 			}
-			// TODO if falided get failcount and increment by 1
-			// TODO if increased fail conut >= retiries push to send notification queue
+			failedCount := updateFailedMonitorCount(message.Id, db)
+			failedCount += 1
+			if failedCount == message.Retries {
+				// TODO if increased fail conut >= retiries push to send notification queue
+			}
 		}
 	}()
 	go func() {
