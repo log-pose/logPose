@@ -29,3 +29,4 @@ var Intervals = []int{
 }
 
 const PUB_MONITOR_Q = "publish_monitors"
+const PUB_NOTIFICATION_Q = "publish_notifications"

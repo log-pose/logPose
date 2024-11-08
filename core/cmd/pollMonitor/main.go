@@ -44,19 +44,31 @@ func updateFailedMonitorCount(monitorId string, db *sql.DB) int {
 	}
 	defer tx.Rollback()
 	var failedMonitor FailedMonitor
-	if err = tx.QueryRowContext(ctx, "SELECT * from monitor_failed WHERE monitor_id = ? LIMIT 1", monitorId).Scan(
+	if err = tx.QueryRowContext(ctx, "SELECT * from monitor_failed WHERE monitor_id = $1 LIMIT 1", monitorId).Scan(
 		&failedMonitor.OrgID,
 		&failedMonitor.FailCount,
 		&failedMonitor.AlertSentTs,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			log.Printf("Monitor wit id: %s does not exist", monitorId)
+			_, err = tx.ExecContext(ctx, "INSERT INTO monitor_failed (monitor_id, fail_count) VALUES ($1, 1)",
+				monitorId)
+			if err != nil {
+				log.Printf("Create failed monitor id: %s failed", monitorId)
+			}
+			if err := tx.Commit(); err != nil {
+				log.Printf("Failed to commit transaction for monitor id: %s", monitorId)
+			}
+			return 0
 		}
 	}
-	_, err = tx.ExecContext(ctx, "UPDATE monitor_failed SET fail_count = fail_count + ? WHERE id = ?",
-		1, monitorId)
+	_, err = tx.ExecContext(ctx, "UPDATE monitor_failed SET fail_count = fail_count + 1 WHERE monitor_id = $1",
+		monitorId)
 	if err != nil {
 		log.Printf("Update of monitor id: %s failed", monitorId)
+	}
+	if err := tx.Commit(); err != nil {
+		log.Printf("Failed to commit transaction for monitor id: %s", monitorId)
+		return 0
 	}
 	return failedMonitor.FailCount
 }
@@ -117,7 +129,14 @@ func main() {
 			failedCount := updateFailedMonitorCount(message.Id, db)
 			failedCount += 1
 			if failedCount == message.Retries {
-				// TODO if increased fail conut >= retiries push to send notification queue
+				queue, err := rmqInstance.GetQueue(pkg.PUB_NOTIFICATION_Q)
+				if err != nil {
+					log.Fatalf("Failed to declare queue: %v", err)
+				}
+				err = queue.Publish("", pkg.PUB_NOTIFICATION_Q, false, false, d.Body)
+				if err != nil {
+					log.Fatalf("Failed to publish message: %v", err)
+				}
 			}
 		}
 	}()
