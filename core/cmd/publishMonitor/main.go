@@ -32,15 +32,12 @@ func getMonitors(pingInterval int, db *sql.DB) ([]Monitor, error) {
 		WHERE ping_interval = $1 
 		AND is_active = $2
 	`, pingInterval, true)
-
 	if err != nil {
 		log.Printf("Error fetching monitors for pingInterval %d: %v", pingInterval, err)
 		return nil, err
 	}
 	defer rows.Close()
-
 	var monitors []Monitor
-
 	for rows.Next() {
 		var (
 			monitor       Monitor
@@ -58,11 +55,9 @@ func getMonitors(pingInterval int, db *sql.DB) ([]Monitor, error) {
 		)
 		if err != nil {
 			log.Printf("Error scanning row: %v", err)
-			continue
 		}
 		if err := json.Unmarshal(additionalRaw, &monitor.AdditionalInfo); err != nil {
 			log.Printf("Error decoding additional_info for monitor %s: %v", monitor.ID, err)
-			continue
 		}
 		monitors = append(monitors, monitor)
 	}
@@ -113,7 +108,7 @@ func main() {
 	for i, ticker := range tickers {
 		go func(i int, ticker *time.Ticker) {
 			for range ticker.C {
-				monitors, err := getMonitors(60, db)
+				monitors, err := getMonitors(60, db) //TODO: change to pkg.Intervals[i] when testing os done
 				if err != nil {
 					log.Fatalf("Failed to retrieve monitors: %v", err)
 				}
@@ -125,8 +120,6 @@ func main() {
 					err = queue.Publish("", pkg.PUB_MONITOR_Q, false, false, mon)
 					if err != nil {
 						log.Fatalf("Failed to publish message: %v", err)
-					} else {
-						log.Printf("Published monitor %s to queue: %s", monitor.ID, pkg.PUB_MONITOR_Q)
 					}
 				}
 			}

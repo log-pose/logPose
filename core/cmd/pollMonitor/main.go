@@ -23,6 +23,11 @@ type AdditionalInfo struct {
 	Headers map[string]string      `json:"headers,omitempty"`
 }
 
+var message struct {
+	Id             string         `json:"id"`
+	AdditionalInfo AdditionalInfo `json:"additional_info"`
+}
+
 func insertMonitorStatus(db *sql.DB, startTs int64, endTs int64, monitorId string, statusCode string, success bool, resp []byte) error {
 	query := `
         INSERT INTO monitor_status (start_ts, end_ts, monitor_id, status_code, success, resp)
@@ -62,24 +67,12 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			msgBody := d.Body
-			var message struct {
-				Id             string         `json:"id"`
-				AdditionalInfo AdditionalInfo `json:"additional_info"`
-			}
-
-			err := json.Unmarshal(msgBody, &message)
+			err := json.Unmarshal(d.Body, &message)
 			if err != nil {
 				log.Printf("Failed to unmarshal message: %v", err)
-				return
 			}
-
-			url := message.AdditionalInfo.URL
-			method := message.AdditionalInfo.Method
-			headers := message.AdditionalInfo.Headers
-			body := message.AdditionalInfo.Body
 			startTs := time.Now().Unix()
-			response, statusCode, err := pollers.HTTPRequest(url, method, body, headers)
+			response, statusCode, err := pollers.HTTPRequest(message.AdditionalInfo.URL, message.AdditionalInfo.Method, message.AdditionalInfo.Body, message.AdditionalInfo.Headers)
 			endTs := time.Now().Unix()
 			if err != nil {
 				log.Printf("Polling monitorId %s failed", message.Id)
