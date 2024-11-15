@@ -31,7 +31,7 @@ export const org = pgTable("organization", {
 export const userOrg = pgTable("user_org", {
 	userId: uuid("user_id").references(() => user.id),
 	orgId: uuid("org_id").references(() => org.id),
-	role: orgRoleEnum('role')
+	role: orgRoleEnum('role').notNull()
 }, (t) => ({
 	unique_user_org: unique().on(
 		t.orgId,

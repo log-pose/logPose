@@ -22,17 +22,9 @@ export const createOrg = async (orgName: string, userId: string) => {
 	})
 }
 
-export const getOrgById = async (orgId: string, userId: string) => {
-	const [orgObj] = await db.select({org}).from(org).leftJoin(userOrg, eq(userOrg.orgId, org.id)).where(
-		and(
-			eq(
-				userOrg.userId, userId
-			),
-			eq(
-				org.id, orgId
-			)
-		)
-	).limit(1)
+export const getOrgById = async (orgId: string ) => {
+	const [orgObj] = await db.select({org}).from(org).where(
+			eq(org.id, orgId)).limit(1)
 	return orgObj.org
 }
 

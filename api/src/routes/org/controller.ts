@@ -6,6 +6,7 @@ import asyncHandler from "../../lib/asyncHandler";
 import { IRequest } from "../../types/request";
 import * as c from "../../lib/constants"
 import * as u from "../../lib/utils"
+import { authOrg } from "../../lib/authorize";
 
 export const createOrg: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
     const { id: userId } = req.user
@@ -28,8 +29,11 @@ export const getOrgById: RequestHandler = asyncHandler(async (req: IRequest, res
     if (!orgId) {
         throw new ApiError(400, "id is required")
     }
-    const org = await service.getOrgById(orgId, userId)
-    console.log(org)
+    const isAuth = await authOrg(userId, "view:org", orgId)
+    if(!isAuth){
+        throw new ApiError(403, "You cannot view this org")
+    }
+    const org = await service.getOrgById(orgId)
     res.status(200).json(new ApiResponse(200, "org found", org))
 })
 
@@ -54,9 +58,9 @@ export const editOrg: RequestHandler = asyncHandler(async (req: IRequest, res: R
     const { orgId } = req.params;
     const { id: userId } = req.user;
     const { orgName } = req.body;
-    const isUserValid = await u.checkIfValidUser(userId, orgId, 'admin')
-    if (!isUserValid) {
-        throw new ApiError(403, "You cannot perform this operation")
+    const isAuth = await authOrg(userId, "update:org", orgId)
+    if(!isAuth){
+        throw new ApiError(403, "You cannot update this org")
     }
     const updatedOrgId = await service.updateOrg(orgId, orgName)
     if (!updatedOrgId || updatedOrgId !== orgId) {
@@ -70,9 +74,9 @@ export const editOrg: RequestHandler = asyncHandler(async (req: IRequest, res: R
 export const deleteOrg: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
     const { orgId } = req.params;
     const { id: userId } = req.user;
-    const isUserValid = await u.checkIfValidUser(userId, orgId, 'admin')
-    if (!isUserValid) {
-        throw new ApiError(403, "You cannot perform this operation")
+    const isAuth = await authOrg(userId, "delete:org", orgId)
+    if (!isAuth) {
+        throw new ApiError(403, "You cannot delete this org")
     }
     const deletedOrgId = await service.deleteOrg(orgId)
     if (!deleteOrg || deletedOrgId !== orgId) {
@@ -87,9 +91,9 @@ export const inviteUserToOrg: RequestHandler = asyncHandler(async (req: IRequest
     const { orgId } = req.params
     const { userToInvite, invitedUserRole } = req.body
     const { id: userId } = req.user;
-    const isUserValid = await u.checkIfValidUser(userId, orgId, 'admin')
-    if (!isUserValid) {
-        throw new ApiError(403, "You cannot perform this operation")
+    const isAuth = await authOrg(userId, "user:org", orgId)
+    if (!isAuth) {
+        throw new ApiError(403, "you cannot invite other users to this org")
     }
     const ifAlreadyMember = await service.checkIfUserAlreadyMember(userToInvite, orgId)
     if (ifAlreadyMember) {
@@ -135,9 +139,9 @@ export const removeUserFromOrg: RequestHandler = asyncHandler(async (req: IReque
     const { orgId } = req.params
     const { userId: userToRemove } = req.query
     const { id: orgAdmin } = req.user
-    const isUserValid = await u.checkIfValidUser(orgAdmin as string, orgId, 'admin')
-    if (!isUserValid) {
-        throw new ApiError(403, "You cannot perform this operation")
+    const isAuth = await authOrg(orgAdmin, "user:org", orgId)
+    if (!isAuth) {
+        throw new ApiError(403, "you cannot invite other users to this org")
     }
     await service.removeUser(orgId, userToRemove as string)
     res.status(200).json(
@@ -158,10 +162,10 @@ export const exitOrg: RequestHandler = asyncHandler(async (req: IRequest, res: R
 export const getOrgMembers: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
     const { orgId } = req.params
     const { limit, page } = req.query
-    const { email } = req.user
-    const isUserMember = await service.checkIfUserAlreadyMember(email, orgId)
-    if (!isUserMember) {
-        throw new ApiError(403, "You cannot view this organization")
+    const {id: userId} = req.user
+    const isAuth = await authOrg(userId, "view:org", orgId)
+    if (!isAuth) {
+        throw new ApiError(403, "You cannot view this org")
     }
     const response = await service.getOrgUser(orgId, parseInt(limit as string), parseInt(page as string))
     res.status(200).json(
@@ -178,9 +182,9 @@ export const modifyUserOrgRole: RequestHandler = asyncHandler(async (req: IReque
     const { id: userId } = req.user
     const { orgId } = req.params
     const { toRole, updateUser } = req.body
-    const isUserValid = await u.checkIfValidUser(userId as string, orgId, 'admin')
-    if (!isUserValid) {
-        throw new ApiError(403, "You cannot perform this operation")
+    const isAuth = await authOrg(userId, "user:org", orgId)
+    if (!isAuth) {
+        throw new ApiError(403, "You cannot update user roles")
     }
     await service.updateUserOrgRole(updateUser, orgId, toRole)
     res.status(200).json(

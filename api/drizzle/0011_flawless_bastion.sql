@@ -1,0 +1,1 @@
+ALTER TABLE "user_org" ALTER COLUMN "role" SET NOT NULL;
