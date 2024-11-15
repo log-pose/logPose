@@ -12,9 +12,22 @@ const ROLES = {
         "update:org",
         "delete:org",
         "user:org",
+        "create:monitor",
+        "view:monitor",
+        "delete:monitor",
+        "update:monitor"
     ],
-    write: ["view:org"],
-    read: ["view:org"],
+    write: [
+        "view:org",
+        "create:monitor",
+        "view:monitor",
+        "delete:monitor",
+        "update:monitor"
+    ],
+    read: [
+        "view:org",
+        "view:monitor"
+    ],
 } as const
 
 export async function authOrg(userId: string, permission: Permission, orgId: string) {
