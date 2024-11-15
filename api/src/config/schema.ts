@@ -7,6 +7,7 @@ export const orgRoleEnum = pgEnum('org_roles', c.orgRoles)
 export const orgPlanEnum = pgEnum("user_plan", c.userPlans)
 export const monitorTypesEnum = pgEnum("monitor_types", c.monitorTypes)
 export const pingIntervalEnum = pgEnum("ping_interval", c.pingInterval)
+export const notificationTypeEnum= pgEnum("notification_type_enum", c.notificationEntity)
 
 // Tables
 export const user = pgTable("lp_user", {
@@ -71,7 +72,7 @@ export const monitorStatus = pgTable("monitor_status", {
 	monitorId: uuid("monitor_id").references(() => monitors.id),
 	statusCode: varchar("status_code"),
 	success: boolean("success"),
-	response : varchar("resp")
+	response: varchar("resp")
 })
 
 export const monitorFailed = pgTable("monitor_failed", {
@@ -79,3 +80,23 @@ export const monitorFailed = pgTable("monitor_failed", {
 	failCount: integer("fail_count"),
 	alertSentTs: bigint("alert_sent_ts", { mode: "bigint" })
 })
+
+export const notificationEntity = pgTable("notification_entity", {
+	id: uuid("id")
+		.default(sql`gen_random_uuid()`)
+		.primaryKey(),
+	name : varchar("name").notNull(),
+	type : notificationTypeEnum("type"),
+	additionalInfo: json("additional_info"),
+})
+
+export const monitorNotifications = pgTable("monitor_notification", {
+	monitorId: uuid("monitor_id").references(() => monitors.id),
+	notificationEntityId: uuid("notification_entity_id").references(() => notificationEntity.id),
+	isActive: boolean("is_active").default(true),
+}, (t)=> ({
+	unq : unique().on(
+		t.monitorId,
+		t.notificationEntityId
+	)
+}))

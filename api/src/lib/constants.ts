@@ -27,6 +27,8 @@ export const pingInterval = [
     pingEnum.ONE_DAY,
 ] as const
 
+export const notificationEntity = ["telegram"] as const
+
 export const DEFAULT_PLAN = "free"
 export const DEFAULT_ROLE = "admin"
 
