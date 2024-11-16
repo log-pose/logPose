@@ -1,0 +1,1 @@
+ALTER TABLE "monitors" ALTER COLUMN "org_id" SET NOT NULL;
