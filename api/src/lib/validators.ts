@@ -7,20 +7,18 @@ const httpSchema = z.object({
     body: z.record(z.any()).optional(),
 });
 
-export const validateHttp = (obj: any): { success: boolean, err: string | null } => {
-    const parsed = httpSchema.safeParse(obj)
-    if (parsed.success) {
-        return {
-            success: true,
-            err: null
-        }
-    }
-    const formatted = parsed.error.format()
-    const formattedStr = formatZodError(parsed.error.format());return {
-        success: false,
-        err: formattedStr
-    }
-}
+const telegramSchema = z.object({
+    botToken: z.string(),
+    chatId: z.string(),
+});
+
+type Result = {
+    success: boolean;
+    err: string | null;
+};
+export const validateHttp = (obj: any): Result => validateWithSchema(httpSchema, obj);
+export const validateTelegram = (obj: any): Result => validateWithSchema(telegramSchema, obj);
+
 
 // helper
 const formatZodError = (error: z.ZodFormattedError<any>): string => {
@@ -30,4 +28,19 @@ const formatZodError = (error: z.ZodFormattedError<any>): string => {
             return `${key} ${errors.join(", ").toLowerCase()}`;
         }
     }).filter(Boolean).join(" and ");
+};
+
+const validateWithSchema = (schema: any, obj: any): Result => {
+    const parsed = schema.safeParse(obj);
+    if (parsed.success) {
+        return {
+            success: true,
+            err: null
+        };
+    }
+    const formattedStr = formatZodError(parsed.error.format());
+    return {
+        success: false,
+        err: formattedStr
+    };
 };
