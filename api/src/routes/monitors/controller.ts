@@ -89,8 +89,8 @@ export const getMonitorById: RequestHandler = asyncHandler(async (req: IRequest,
 export const deleteMonitor: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
     const { id } = req.params
     const user = req.user
-    const monitor = await s.getMonitorById(id)
-    const isAuth = await authOrg(user.userId, "delete:monitor", monitor.orgId!)
+    const { orgId } = req.query
+    const isAuth = await authOrg(user.userId, "delete:monitor", orgId as string)
     if (!isAuth) {
         throw new ApiError(403, "You cannot delete a monitor for this org")
     }
