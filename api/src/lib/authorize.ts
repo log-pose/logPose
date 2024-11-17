@@ -15,18 +15,27 @@ const ROLES = {
         "create:monitor",
         "view:monitor",
         "delete:monitor",
-        "update:monitor"
+        "update:monitor",
+        "create:notifiers",
+        "view:notifiers",
+        "update:notifiers",
+        "delete:notifiers",
     ],
     write: [
         "view:org",
         "create:monitor",
         "view:monitor",
         "delete:monitor",
-        "update:monitor"
+        "update:monitor",
+        "create:notifiers",
+        "view:notifiers",
+        "update:notifiers",
+        "delete:notifiers",
     ],
     read: [
         "view:org",
-        "view:monitor"
+        "view:monitor",
+        "view:notifiers",
     ],
 } as const
 
