@@ -7,7 +7,7 @@ export const orgRoleEnum = pgEnum('org_roles', c.orgRoles)
 export const orgPlanEnum = pgEnum("user_plan", c.userPlans)
 export const monitorTypesEnum = pgEnum("monitor_types", c.monitorTypes)
 export const pingIntervalEnum = pgEnum("ping_interval", c.pingInterval)
-export const notificationTypeEnum= pgEnum("notification_type_enum", c.notificationEntity)
+export const notificationTypeEnum = pgEnum("notification_type_enum", c.notificationEntity)
 
 // Tables
 export const user = pgTable("lp_user", {
@@ -24,13 +24,13 @@ export const org = pgTable("organization", {
 		.default(sql`gen_random_uuid()`)
 		.primaryKey(),
 	name: varchar("org_name").unique(),
-	created_by: uuid("created_by").references(() => user.id),
+	created_by: uuid("created_by").references(() => user.id, { onDelete: 'cascade' }),
 	created_at: timestamp("created_at").default(sql`now()`),
 	plan: orgPlanEnum("org_plan")
 })
 export const userOrg = pgTable("user_org", {
-	userId: uuid("user_id").references(() => user.id),
-	orgId: uuid("org_id").references(() => org.id),
+	userId: uuid("user_id").references(() => user.id, { onDelete: 'cascade' }),
+	orgId: uuid("org_id").references(() => org.id, { onDelete: 'cascade' }),
 	role: orgRoleEnum('role').notNull()
 }, (t) => ({
 	unique_user_org: unique().on(
@@ -45,14 +45,14 @@ export const orgInvite = pgTable("org_invite", {
 		.default(sql`extract(epoch from now())`),
 	invitee: varchar("invitee").notNull(),
 	invitedRole: orgRoleEnum('role').notNull(),
-	inviter: uuid('inviter').references(() => user.id).notNull(),
-	orgId: uuid("org_id").references(() => org.id).notNull()
+	inviter: uuid('inviter').references(() => user.id, { onDelete: 'cascade' }).notNull(),
+	orgId: uuid("org_id").references(() => org.id, { onDelete: 'cascade' }).notNull()
 })
 export const monitors = pgTable("monitors", {
 	id: uuid("id")
 		.default(sql`gen_random_uuid()`)
 		.primaryKey(),
-	orgId: uuid("org_id").references(() => org.id).notNull(),
+	orgId: uuid("org_id").references(() => org.id, { onDelete: 'cascade' }).notNull(),
 	name: varchar("name").notNull(),
 	monitorType: monitorTypesEnum("monitor_types").notNull(),
 	ping: pingIntervalEnum("ping_interval").default(c.pingEnum.FIFTEEN_MIN).notNull(), // choosing fifteen minute as default as not to overload
@@ -69,14 +69,14 @@ export const monitors = pgTable("monitors", {
 export const monitorStatus = pgTable("monitor_status", {
 	startTs: bigint("start_ts", { mode: "bigint" }),
 	endTs: bigint("end_ts", { mode: "bigint" }),
-	monitorId: uuid("monitor_id").references(() => monitors.id),
+	monitorId: uuid("monitor_id").references(() => monitors.id, { onDelete: 'cascade' }),
 	statusCode: varchar("status_code"),
 	success: boolean("success"),
 	response: varchar("resp")
 })
 
 export const monitorFailed = pgTable("monitor_failed", {
-	monitorId: uuid("monitor_id").references(() => monitors.id),
+	monitorId: uuid("monitor_id").references(() => monitors.id, { onDelete: 'cascade' }),
 	failCount: integer("fail_count"),
 	alertSentTs: bigint("alert_sent_ts", { mode: "bigint" })
 })
@@ -85,17 +85,17 @@ export const notificationEntity = pgTable("notification_entity", {
 	id: uuid("id")
 		.default(sql`gen_random_uuid()`)
 		.primaryKey(),
-	name : varchar("name").notNull(),
-	type : notificationTypeEnum("type"),
+	name: varchar("name").notNull(),
+	type: notificationTypeEnum("type"),
 	additionalInfo: json("additional_info"),
 })
 
 export const monitorNotifications = pgTable("monitor_notification", {
-	monitorId: uuid("monitor_id").references(() => monitors.id),
-	notificationEntityId: uuid("notification_entity_id").references(() => notificationEntity.id),
+	monitorId: uuid("monitor_id").references(() => monitors.id, { onDelete: 'cascade' }),
+	notificationEntityId: uuid("notification_entity_id").references(() => notificationEntity.id, { onDelete: 'cascade' }),
 	isActive: boolean("is_active").default(true),
-}, (t)=> ({
-	unq : unique().on(
+}, (t) => ({
+	unq: unique().on(
 		t.monitorId,
 		t.notificationEntityId
 	)
