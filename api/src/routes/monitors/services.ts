@@ -3,6 +3,7 @@ import { monitors, org } from "../../config/schema"
 import { db } from "../../loaders/psql"
 import { TMonitorType, TPingInterval } from "../../types/monitor"
 import * as v from "../../lib/validators"
+import { TValidator } from "../../types/validator"
 
 export const deleteMonitor = async (id: string) => {
     await db.delete(monitors)
@@ -44,7 +45,7 @@ export const createMonitor = async (name: string, additionalInfo: any, pingInter
     return monitor
 }
 
-export const validateMonitorType = (type: string, obj: any): { success: boolean, err: string | null } => {
+export const validateMonitorType = (type: string, obj: any): TValidator => {
     switch (type) {
         case "http": {
             return v.validateHttp(obj)

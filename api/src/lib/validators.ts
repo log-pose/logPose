@@ -1,4 +1,5 @@
 import * as z from "zod"
+import { TValidator } from "../types/validator";
 
 const httpSchema = z.object({
     url: z.string().url(),
@@ -12,13 +13,8 @@ const telegramSchema = z.object({
     chatId: z.string(),
 });
 
-type Result = {
-    success: boolean;
-    err: string | null;
-};
-export const validateHttp = (obj: any): Result => validateWithSchema(httpSchema, obj);
-export const validateTelegram = (obj: any): Result => validateWithSchema(telegramSchema, obj);
-
+export const validateHttp = (obj: any): TValidator => validateWithSchema(httpSchema, obj);
+export const validateTelegram = (obj: any): TValidator => validateWithSchema(telegramSchema, obj);
 
 // helper
 const formatZodError = (error: z.ZodFormattedError<any>): string => {
@@ -30,7 +26,7 @@ const formatZodError = (error: z.ZodFormattedError<any>): string => {
     }).filter(Boolean).join(" and ");
 };
 
-const validateWithSchema = (schema: any, obj: any): Result => {
+const validateWithSchema = (schema: any, obj: any): TValidator => {
     const parsed = schema.safeParse(obj);
     if (parsed.success) {
         return {
