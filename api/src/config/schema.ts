@@ -86,7 +86,7 @@ export const notificationEntity = pgTable("notification_entity", {
 		.default(sql`gen_random_uuid()`)
 		.primaryKey(),
 	name: varchar("name").notNull(),
-	type: notificationTypeEnum("type"),
+	type: notificationTypeEnum("type").notNull(),
 	additionalInfo: json("additional_info"),
 })
 

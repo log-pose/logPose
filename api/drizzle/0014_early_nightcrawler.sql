@@ -1,0 +1,1 @@
+ALTER TABLE "notification_entity" ALTER COLUMN "type" SET NOT NULL;
