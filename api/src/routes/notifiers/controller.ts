@@ -79,3 +79,32 @@ export const getById: RequestHandler = asyncHandler(async (req: IRequest, res: R
         new ApiResponse(200, "notifier found", notifier)
     )
 })
+
+type CReq = IRequest & {
+    query : {
+        monitorId : string,
+        kind : string,
+        orgId : string
+    }
+}
+const validkind = ['org', 'monitor']
+export const getNotifiers: RequestHandler = asyncHandler(async (req: CReq, res: Response) => {
+    const { id: userId } = req.user
+    const { monitorId, kind = "org", orgId } = req.query
+    
+    if (!validkind.includes(kind)) {
+        throw new ApiError(400, "Not a valid kind")
+    }
+    const entityId = kind === "org" ? orgId : monitorId
+
+    const isAuth = authOrg(userId, "view:org", orgId as string)
+    if (!isAuth) {
+        throw new ApiError(403, "You cannot view a notifier in this org")
+    }
+
+    const notifiers = s.getEntityNotifier(kind, entityId)
+
+    res.status(200).json(
+        new ApiResponse(200, `Notifiers for ${kind} found`, notifiers)
+    )
+})

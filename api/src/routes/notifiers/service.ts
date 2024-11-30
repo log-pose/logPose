@@ -2,7 +2,7 @@ import { TValidator } from "../../types/validator";
 import * as v from "../../lib/validators"
 import Encrypter from "../../lib/Encrypter"
 import { db } from "../../loaders/psql";
-import { notificationEntity } from "../../config/schema";
+import { monitorNotifications, monitors, notificationEntity } from "../../config/schema";
 import { TNotifier } from "../../types/notifier";
 import { eq } from "drizzle-orm";
 
@@ -62,5 +62,20 @@ export const validate = (type: TNotifier, obj: any): TValidator => {
                 success: false,
                 err: "No such monitor type"
             }
+    }
+}
+
+export const getEntityNotifier = async(entityKind: string, entityId : string) => {
+    switch (entityKind){
+        case "org":
+            return db.select({
+                monitorId : monitorNotifications.monitorId,
+                notificationEntityId : monitorNotifications.notificationEntityId,
+                isActive : monitorNotifications.isActive
+            }).from(monitorNotifications).leftJoin(
+                monitors, eq(monitors.orgId, entityId)
+            ) 
+        case "monitor":
+            return db.select().from(monitorNotifications).where(eq(monitorNotifications.monitorId, entityId))
     }
 }
