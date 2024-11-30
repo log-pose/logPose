@@ -1,6 +1,6 @@
 import crypto from "node:crypto"
 import {db} from "../../loaders/psql";
-import {org, orgInvite, user, userOrg} from "../../config/schema";
+import {monitors, org, orgInvite, user, userOrg} from "../../config/schema";
 import {and, eq} from "drizzle-orm";
 import {TOrgRoles} from "../../types/org";
 import {sendEmail} from "../../lib/mail";
@@ -182,12 +182,11 @@ export const updateUserOrgRole = async (userId: string, orgId: string, userOrgRo
 }
 
 export const getMonitors = async (orgId: string) => {
-	return null
-//	return psqlClient.select({
-//		id: monitors.id,
-//		name: monitors.name,
-//		kind: monitors.kind
-//	}).from(monitors).where(
-//		eq(monitors.orgId, orgId)
-//	)
+	return db.select({
+		id: monitors.id,
+		name: monitors.name,
+		kind: monitors.monitorType
+	}).from(monitors).where(
+		eq(monitors.orgId, orgId)
+	)
 }

@@ -193,12 +193,16 @@ export const modifyUserOrgRole: RequestHandler = asyncHandler(async (req: IReque
 })
 
 export const getOrgMonitors: RequestHandler = asyncHandler(async (req: IRequest, res: Response) => {
+    const { id: userId } = req.user
     const { id } = req.params
-    const monitors = {}
-    //const monitors = await service.getMonitors(id)
-    //if (monitors.length === 0) {
-    //    throw new ApiError(404, "No monitors found.")
-    //}
+    const isAuth = await authOrg(userId, "view:org", id)
+    if (!isAuth) {
+        throw new ApiError(403, "You cannot view this org")
+    }
+    const monitors = await service.getMonitors(id)
+    if (monitors.length === 0) {
+       throw new ApiError(404, "No monitors found.")
+    }
     res.status(200).json(
         new ApiResponse(200, "Monitors found", monitors)
     )
