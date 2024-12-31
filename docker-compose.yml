@@ -24,6 +24,29 @@ services:
       - 15672:15672
     volumes:
       - rmq:/var/lib/rabbitmq/
+  
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    environment:
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET}
+      - PSQL_HOST=postgres
+      - PSQL_USER=${PSQL_USER}
+      - PSQL_PASSWORD=${PSQL_PASSWORD}
+      - PSQL_DB=${PSQL_DATABASE}
+      - PSQL_PORT=5432
+      - DEBUG_LEVEL=${DEBUG_LEVEL}
+    volumes:
+      - ./api:/usr/src/api
+    depends_on:
+      - postgres
+      - rmq
 
 volumes:
   postgres:

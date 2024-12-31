@@ -7,8 +7,7 @@
     "push": "drizzle-kit push",
     "build": "npx tsc",
     "start": "node --env-file=../.env dist/src/index.js",
-  
-    "dev": "nodemon --exec node -r ts-node/register --env-file=../.env src/index.ts"
+    "dev": "nodemon --exec node -r ts-node/register  src/index.ts"
   },
   "author": "",
   "license": "ISC",
