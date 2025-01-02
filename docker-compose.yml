@@ -42,8 +42,9 @@ services:
       - PSQL_DB=${PSQL_DATABASE}
       - PSQL_PORT=5432
       - DEBUG_LEVEL=${DEBUG_LEVEL}
+    command: bash -c "cd /api && npm install && npm run dev"
     volumes:
-      - ./api:/usr/src/api
+      - ./api:/api
     depends_on:
       - postgres
       - rmq
